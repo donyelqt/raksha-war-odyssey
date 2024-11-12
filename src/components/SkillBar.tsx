@@ -18,7 +18,7 @@ const SkillBar: React.FC<SkillBarProps> = ({ onSkillSelect }) => {
 
   return (
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 p-2 rounded-lg flex gap-2">
-      {selectedCharacter.skills.map((skill) => (
+      {selectedCharacter.skills.map((skill: Skill) => (
         <button
           key={skill.id}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white"

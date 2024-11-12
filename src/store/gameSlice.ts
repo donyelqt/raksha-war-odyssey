@@ -57,7 +57,7 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    selectCharacterInPhase: (state, action: PayloadAction<Character>) => {
+    selectCharacterInPhase: (state: GameState, action: PayloadAction<Character>) => {
       const currentPlayer = state.currentTurn;
       if (state.players[currentPlayer].characters.length < 2) {
         const character = { ...action.payload };
@@ -71,11 +71,11 @@ const gameSlice = createSlice({
       }
     },
 
-    selectCharacter: (state, action: PayloadAction<Character>) => {
+    selectCharacter: (state: GameState, action: PayloadAction<Character>) => {
       state.selectedCharacter = action.payload;
     },
 
-    moveCharacter: (state, action: PayloadAction<{characterId: string, position: Position}>) => {
+    moveCharacter: (state: GameState, action: PayloadAction<{characterId: string, position: Position}>) => {
       const { characterId, position } = action.payload;
       const currentPlayer = state.currentTurn;
       const character = state.players[currentPlayer].characters.find(c => c.id === characterId);
@@ -85,7 +85,7 @@ const gameSlice = createSlice({
       }
     },
 
-    attackCharacter: (state, action: PayloadAction<{attackerId: string, targetId: string}>) => {
+    attackCharacter: (state: GameState, action: PayloadAction<{attackerId: string, targetId: string}>) => {
       const { attackerId, targetId } = action.payload;
       const currentPlayer = state.currentTurn;
       const otherPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
@@ -103,7 +103,7 @@ const gameSlice = createSlice({
       }
     },
 
-    useSkill: (state, action: PayloadAction<{
+    useSkill: (state: GameState, action: PayloadAction<{
       characterId: string,
       skillId: string,
       targetPosition: Position
@@ -145,17 +145,17 @@ const gameSlice = createSlice({
       }
     },
 
-    endTurn: (state) => {
+    endTurn: (state: GameState) => {
       state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
       state.turnTimer = 10;
       state.selectedCharacter = null;
     },
 
-    updateTimer: (state, action: PayloadAction<number>) => {
+    updateTimer: (state: GameState, action: PayloadAction<number>) => {
       state.turnTimer = action.payload;
     },
 
-    checkWinCondition: (state) => {
+    checkWinCondition: (state: GameState) => {
       const currentPlayer = state.currentTurn;
       const otherPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
       
@@ -170,7 +170,7 @@ const gameSlice = createSlice({
       }
     },
 
-    executeBotMove: (state) => {
+    executeBotMove: (state: GameState) => {
       if (state.gameMode === 'BOT' && !state.gameOver) {
         const action = botEngine.calculateNextMove(state);
         

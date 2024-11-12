@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { selectCharacter } from '../store/gameSlice';
+import { selectCharacterInPhase } from '../store/gameSlice';
 import { Character } from '../types/game.types';
 
 const CharacterSelection: React.FC = () => {
@@ -9,7 +9,7 @@ const CharacterSelection: React.FC = () => {
   const { availableCharacters, currentTurn, players } = useSelector((state: RootState) => state.game);
 
   const handleCharacterSelect = (character: Character) => {
-    dispatch(selectCharacter(character));
+    dispatch(selectCharacterInPhase(character));
   };
 
   return (
@@ -18,9 +18,9 @@ const CharacterSelection: React.FC = () => {
       <p className="mb-4 text-gray-400">{currentTurn}'s turn to choose</p>
       
       <div className="grid grid-cols-2 gap-4">
-        {availableCharacters.map((character) => {
-          const isSelected = players.player1.characters.some(c => c.id === character.id) ||
-                           players.player2.characters.some(c => c.id === character.id);
+        {availableCharacters.map((character: Character) => {
+          const isSelected = players.player1.characters.some((c: Character) => c.id === character.id) ||
+                           players.player2.characters.some((c: Character) => c.id === character.id);
           
           return (
             <button
@@ -36,7 +36,7 @@ const CharacterSelection: React.FC = () => {
               <h3 className="text-lg font-bold">{character.name}</h3>
               <div className="mt-2 text-sm">
                 <p>Health: {character.health}</p>
-                <p>Skills: {character.skills.map(s => s.name).join(', ')}</p>
+                <p>Skills: {character.skills.map((s: { name: string }) => s.name).join(', ')}</p>
               </div>
             </button>
           );
