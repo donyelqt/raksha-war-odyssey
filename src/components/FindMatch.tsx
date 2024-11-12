@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 
 interface FindMatchProps {
   onSelectMode: (mode: 'PVP' | 'BOT') => void;
