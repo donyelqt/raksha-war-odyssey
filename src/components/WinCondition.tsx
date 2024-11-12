@@ -8,15 +8,19 @@ const WinCondition: React.FC = () => {
 
   React.useEffect(() => {
     if (winner) {
+      // Calculate duration based on turn count and timer values
+      const avgTurnTime = gameMode === 'PVP' ? 10 : 3;
+      const estimatedDuration = turnCount * avgTurnTime;
+      
       // Save match to history
       matchHistoryService.saveMatch({
         gameMode,
         winner,
         players,
         turnCount,
-      });
+      }, estimatedDuration);
     }
-  }, [winner]);
+  }, [winner, gameMode, turnCount, players]);
 
   if (!winner) return null;
 

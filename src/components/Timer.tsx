@@ -5,7 +5,7 @@ import { updateTimer, endTurn, handleTurnViolation } from '../store/gameSlice';
 
 const Timer: React.FC = () => {
   const dispatch = useDispatch();
-  const { turnTimer, currentTurn, gameStarted, gameMode } = useSelector((state: RootState) => state.game);
+  const { turnTimer, currentTurn, gameStarted } = useSelector((state: RootState) => state.game);
 
   useEffect(() => {
     if (!gameStarted) return;
