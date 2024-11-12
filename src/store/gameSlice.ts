@@ -76,6 +76,7 @@ const initialState: GameState = {
     player1: null,
     player2: null,
   },
+  gameStarted: false,
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -118,6 +119,10 @@ const gameSlice = createSlice({
       } else {
         handleInvalidAction(state);
       }
+      if (!state.gameStarted) {
+        state.gameStarted = true;
+        state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
+      }
     },
 
     attackCharacter: (state: GameState, action: PayloadAction<{attackerId: string, targetId: string}>) => {
@@ -142,6 +147,10 @@ const gameSlice = createSlice({
       } else {
         handleInvalidAction(state);
       }
+      if (!state.gameStarted) {
+        state.gameStarted = true;
+        state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
+      }
     },
 
     useSkill: (state: GameState, action: PayloadAction<{
@@ -163,6 +172,10 @@ const gameSlice = createSlice({
         } else {
           handleInvalidAction(state);
         }
+      }
+      if (!state.gameStarted) {
+        state.gameStarted = true;
+        state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
       }
     },
 
@@ -304,6 +317,17 @@ const gameSlice = createSlice({
       // Start game if both engines are selected
       if (state.botEngines.player1 && state.botEngines.player2) {
         state.characterSelectionPhase = true;
+      }
+    },
+
+    handleTurnViolation: (state: GameState) => {
+      const currentPlayer = state.currentTurn;
+      state.players[currentPlayer].consecutiveInvalidActions++;
+      
+      if (state.players[currentPlayer].consecutiveInvalidActions >= 3) {
+        // Player loses after 3 consecutive violations
+        state.winner = currentPlayer === 'player1' ? 'player2' : 'player1';
+        state.gameOver = true;
       }
     },
   },
@@ -454,6 +478,7 @@ export const {
   endBotBattleMatch,
   setGameMode,
   setBotEngine,
+  handleTurnViolation,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
