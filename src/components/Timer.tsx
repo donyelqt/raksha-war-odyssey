@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { updateTimer, endTurn } from '../store/gameSlice';
+import { updateTimer, endTurn, handleTurnViolation } from '../store/gameSlice';
 
 const Timer: React.FC = () => {
   const dispatch = useDispatch();
-  const { turnTimer, currentTurn, gameStarted } = useSelector((state: RootState) => state.game);
+  const { turnTimer, currentTurn, gameStarted, gameMode } = useSelector((state: RootState) => state.game);
 
   useEffect(() => {
     if (!gameStarted) return;
@@ -14,8 +14,7 @@ const Timer: React.FC = () => {
       if (turnTimer > 0) {
         dispatch(updateTimer(turnTimer - 1));
       } else {
-        // Handle turn violation
-        dispatch({ type: 'game/handleTurnViolation' });
+        dispatch(handleTurnViolation());
         dispatch(endTurn());
       }
     }, 1000);

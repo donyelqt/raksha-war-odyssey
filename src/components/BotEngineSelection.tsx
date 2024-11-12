@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setBotEngine } from '../store/gameSlice';
+import { setBotEngine, startGame } from '../store/gameSlice';
 
 const botEngines = [
   { id: 'aggressive', name: 'Aggressive Bot', description: 'Focuses on attacking and dealing damage' },
@@ -17,6 +17,7 @@ const BotEngineSelection: React.FC = () => {
     if (player1Bot && player2Bot) {
       dispatch(setBotEngine({ player: 'player1', engineId: player1Bot }));
       dispatch(setBotEngine({ player: 'player2', engineId: player2Bot }));
+      dispatch(startGame());
     }
   };
 

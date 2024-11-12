@@ -21,6 +21,21 @@ export interface Skill {
   cooldown: number;
 }
 
+export interface MatchRecord {
+  date: string;
+  gameMode: 'PVP' | 'BOT';
+  winner: string;
+  duration: number;
+  players: {
+    player1: {
+      characters: string[];
+    };
+    player2: {
+      characters: string[];
+    };
+  };
+}
+
 export interface GameState {
   players: {
     [key: string]: {
@@ -48,4 +63,5 @@ export interface GameState {
     player2: string | null;
   };
   gameStarted: boolean;
+  recentMatches: MatchRecord[];
 } 

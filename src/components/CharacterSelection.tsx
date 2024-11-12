@@ -12,18 +12,20 @@ const CharacterSelection: React.FC = () => {
     dispatch(selectCharacterInPhase(character));
   };
 
+  const totalSelectedCharacters = players.player1.characters.length + players.player2.characters.length;
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-6xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">Character Selection</h1>
-          <p className="text-xl text-blue-400">{currentTurn}'s Turn to Choose</p>
+          <p className="text-xl text-blue-400">{currentTurn}'s Turn to Choose (Character {totalSelectedCharacters + 1}/4)</p>
         </header>
 
         <div className="grid grid-cols-3 gap-6">
           {availableCharacters.map((character: Character) => {
-            const isSelected = players.player1.characters.some((c: Character) => c.id === character.id) ||
-                             players.player2.characters.some((c: Character) => c.id === character.id);
+            const isSelected = players.player1.characters.some(c => c.id === character.id) ||
+                               players.player2.characters.some(c => c.id === character.id);
             
             return (
               <div

@@ -155,6 +155,7 @@ const initialState: GameState = {
     player2: null,
   },
   gameStarted: false,
+  recentMatches: [],
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -296,14 +297,7 @@ const gameSlice = createSlice({
         state.gameOver = true;
         if (state.gameMode === 'BOT') {
           state.botBattleMatchCount++;
-        }
-      }
-
-      if (state.winner) {
-        if (state.gameMode === 'BOT') {
-          gameSlice.caseReducers.endBotBattleMatch(state);
-        } else {
-          state.gameOver = true;
+          state.botBattleWins[currentPlayer as 'player1' | 'player2']++;
         }
       }
     },
@@ -384,7 +378,6 @@ const gameSlice = createSlice({
     setGameMode: (state: GameState, action: PayloadAction<'PVP' | 'BOT'>) => {
       state.gameMode = action.payload;
       state.turnTimer = action.payload === 'PVP' ? 10 : 3;
-      // Randomly select starting player for PVP mode
       if (action.payload === 'PVP') {
         state.currentTurn = Math.random() < 0.5 ? 'player1' : 'player2';
       }
@@ -403,10 +396,14 @@ const gameSlice = createSlice({
       state.players[currentPlayer].consecutiveInvalidActions++;
       
       if (state.players[currentPlayer].consecutiveInvalidActions >= 3) {
-        // Player loses after 3 consecutive violations
         state.winner = currentPlayer === 'player1' ? 'player2' : 'player1';
         state.gameOver = true;
       }
+    },
+
+    startGame: (state: GameState) => {
+      state.gameStarted = true;
+      state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
     },
   },
 });
@@ -557,6 +554,7 @@ export const {
   setGameMode,
   setBotEngine,
   handleTurnViolation,
+  startGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
