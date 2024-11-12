@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GameState, Position, Character } from '../types/game.types';
+import { botEngine } from '../services/botEngine';
 
 const initialCharacters: Character[] = [
   {
@@ -168,6 +169,37 @@ const gameSlice = createSlice({
         state.gameOver = true;
       }
     },
+
+    executeBotMove: (state) => {
+      if (state.gameMode === 'BOT' && !state.gameOver) {
+        const action = botEngine.calculateNextMove(state);
+        
+        switch (action.type) {
+          case 'move':
+            if (action.target) {
+              const character = state.players[state.currentTurn].characters
+                .find(c => c.id === action.characterId);
+              if (character) {
+                character.position = action.target;
+              }
+            }
+            break;
+            
+          case 'attack':
+            // Handle attack action
+            break;
+            
+          case 'skill':
+            if (action.target && action.skillId) {
+              // Handle skill action
+            }
+            break;
+        }
+        
+        state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+        state.turnTimer = 10;
+      }
+    },
   },
 });
 
@@ -179,7 +211,8 @@ export const {
   useSkill,
   endTurn, 
   updateTimer,
-  checkWinCondition 
+  checkWinCondition,
+  executeBotMove 
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

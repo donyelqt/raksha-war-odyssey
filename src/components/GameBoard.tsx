@@ -6,6 +6,7 @@ import Character from './Character';
 import Castle from './Castle';
 import SkillBar from './SkillBar';
 import { RootState } from '../store';
+import SkillEffect from './SkillEffect';
 
 interface GameBoardProps {
   size: number;
@@ -15,16 +16,26 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   const dispatch = useDispatch();
   const { players, currentTurn, selectedCharacter } = useSelector((state: RootState) => state.game);
   const [targetingSkill, setTargetingSkill] = useState<Skill | null>(null);
+  const [activeEffect, setActiveEffect] = useState<{
+    type: 'damage' | 'heal' | 'defense' | 'control';
+    position: Position;
+  } | null>(null);
 
   const handleSquareClick = (position: Position) => {
     if (!selectedCharacter) return;
 
     if (targetingSkill) {
+      setActiveEffect({
+        type: targetingSkill.effect as 'damage' | 'heal' | 'defense' | 'control',
+        position
+      });
+      
       dispatch(useSkill({
         characterId: selectedCharacter.id,
         skillId: targetingSkill.id,
         targetPosition: position
       }));
+      
       setTargetingSkill(null);
       return;
     }
@@ -122,6 +133,14 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       ))}
 
       <SkillBar onSkillSelect={setTargetingSkill} />
+
+      {activeEffect && (
+        <SkillEffect
+          type={activeEffect.type}
+          position={activeEffect.position}
+          onComplete={() => setActiveEffect(null)}
+        />
+      )}
     </div>
   );
 };
