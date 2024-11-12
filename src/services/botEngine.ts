@@ -32,9 +32,17 @@ export class BotEngine {
   private evaluateSkill(skill: Skill, character: Character, target: Position, gameState: GameState): number {
     if (skill.cooldown > 0) return -Infinity;
 
+    const currentPlayer = gameState.currentTurn;
+    const otherPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
+    const enemyCharacters = gameState.players[otherPlayer].characters;
+
     switch (skill.effect) {
       case 'damage':
-        return 8;
+        // Consider enemy health when evaluating damage skills
+        const nearbyEnemies = enemyCharacters.filter(enemy => 
+          Math.abs(enemy.position.x - target.x) + Math.abs(enemy.position.y - target.y) <= skill.range
+        );
+        return nearbyEnemies.length > 0 ? 8 + Math.min(...nearbyEnemies.map(e => e.health)) / 20 : 0;
       case 'heal':
         return character.health < 50 ? 10 : 0;
       case 'defense':

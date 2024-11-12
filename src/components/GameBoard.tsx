@@ -94,12 +94,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     return null;
   };
 
-  const canAttack = (attacker: CharacterType, target: CharacterType) => {
-    const dx = Math.abs(target.position.x - attacker.position.x);
-    const dy = Math.abs(target.position.y - attacker.position.y);
-    return dx <= 1 && dy <= 1;
-  };
-
   const isValidSkillTarget = (position: Position) => {
     if (!selectedCharacter || !targetingSkill) return false;
     const dx = Math.abs(position.x - selectedCharacter.position.x);

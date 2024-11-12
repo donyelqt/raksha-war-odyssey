@@ -9,6 +9,8 @@ const initialCharacters: Character[] = [
     name: 'Warrior',
     position: { x: 0, y: 0 },
     health: 100,
+    controlled: false,
+    defense: 0,
     skills: [
       { id: 'slash', name: 'Slash', range: 1, effect: 'damage', cooldown: 0 },
       { id: 'shield', name: 'Shield Wall', range: 0, effect: 'defense', cooldown: 3 },
@@ -20,6 +22,8 @@ const initialCharacters: Character[] = [
     name: 'Archer',
     position: { x: 1, y: 0 },
     health: 80,
+    controlled: false,
+    defense: 0,
     skills: [
       { id: 'arrow', name: 'Arrow Shot', range: 3, effect: 'damage', cooldown: 0 },
       { id: 'trap', name: 'Set Trap', range: 2, effect: 'control', cooldown: 3 },
@@ -31,6 +35,8 @@ const initialCharacters: Character[] = [
     name: 'Mage',
     position: { x: 2, y: 0 },
     health: 70,
+    controlled: false,
+    defense: 0,
     skills: [
       { id: 'fireball', name: 'Fireball', range: 3, effect: 'damage', cooldown: 0 },
       { id: 'teleport', name: 'Teleport', range: 3, effect: 'movement', cooldown: 4 },
@@ -44,10 +50,12 @@ const initialState: GameState = {
     player1: {
       characters: [],
       castle: { x: 0, y: 8 },
+      consecutiveInvalidActions: 0,
     },
     player2: {
       characters: [],
       castle: { x: 8, y: 0 },
+      consecutiveInvalidActions: 0,
     },
   },
   currentTurn: 'player1',

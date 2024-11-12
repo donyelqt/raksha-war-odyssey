@@ -1,4 +1,4 @@
-import { GameState } from './game.types';
+import { GameState, Character, Position } from './game.types';
 
 export interface RootState {
   game: GameState;
