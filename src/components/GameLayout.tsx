@@ -8,6 +8,7 @@ import BotBattleStatus from './BotBattleStatus';
 import MatchHistory from './MatchHistory';
 import PlayerInfo from './PlayerInfo';
 import SkillBar from './SkillBar';
+import GameHeader from './GameHeader';
 
 const GameLayout: React.FC = () => {
   const { gameMode } = useSelector((state: RootState) => state.game);
@@ -15,38 +16,38 @@ const GameLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Game Header */}
-        <header className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Raksha: War Odyssey</h1>
-          <div className="flex space-x-4">
-            <button className="px-4 py-2 bg-gray-800 rounded hover:bg-gray-700">
-              Settings
-            </button>
-            <button className="px-4 py-2 bg-red-600 rounded hover:bg-red-700">
-              Surrender
-            </button>
-          </div>
-        </header>
-
-        {/* Main Game Area */}
+        <GameHeader />
+        
         <div className="flex gap-4">
           {/* Left Sidebar - Player 1 Info */}
-          <div className="w-64">
-            <PlayerInfo playerId="player1" />
+          <div className="w-72 space-y-4">
+            <PlayerInfo 
+              playerId="player1"
+              className="bg-gradient-to-br from-blue-900 to-blue-800"
+            />
+            <div className="bg-gray-800 p-4 rounded-lg">
+              <h3 className="text-lg font-bold mb-2">Match History</h3>
+              <MatchHistory limit={3} />
+            </div>
           </div>
 
           {/* Game Board and Skill Bar */}
           <div className="flex-1 flex flex-col">
-            <GameBoard size={9} />
-            <SkillBar onSkillSelect={() => {}} />
+            <div className="relative bg-gray-800 p-4 rounded-lg">
+              <GameBoard size={9} />
+              <SkillBar onSkillSelect={() => {}} />
+            </div>
           </div>
 
-          {/* Right Sidebar - Game Info & Stats */}
-          <div className="w-64 space-y-4">
+          {/* Right Sidebar - Player 2 Info & Game Stats */}
+          <div className="w-72 space-y-4">
+            <PlayerInfo 
+              playerId="player2"
+              className="bg-gradient-to-br from-red-900 to-red-800"
+            />
             <GameInfo />
             <GameStats />
             {gameMode === 'BOT' && <BotBattleStatus />}
-            <MatchHistory />
           </div>
         </div>
       </div>

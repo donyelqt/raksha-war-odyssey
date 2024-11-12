@@ -1,87 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { setBotEngine } from '../store/gameSlice';
 
-interface BotEngine {
-  id: string;
-  name: string;
-  description: string;
-}
-
-const availableBotEngines: BotEngine[] = [
-  {
-    id: 'aggressive',
-    name: 'Aggressive Bot',
-    description: 'Focuses on attacking and dealing damage',
-  },
-  {
-    id: 'defensive',
-    name: 'Defensive Bot',
-    description: 'Prioritizes survival and defensive strategies',
-  },
-  {
-    id: 'balanced',
-    name: 'Balanced Bot',
-    description: 'Uses a mix of offensive and defensive tactics',
-  },
+const botEngines = [
+  { id: 'aggressive', name: 'Aggressive Bot', description: 'Focuses on attacking and dealing damage' },
+  { id: 'defensive', name: 'Defensive Bot', description: 'Prioritizes survival and defensive strategies' },
+  { id: 'balanced', name: 'Balanced Bot', description: 'Uses a mix of offensive and defensive tactics' },
 ];
 
 const BotEngineSelection: React.FC = () => {
   const dispatch = useDispatch();
+  const [player1Bot, setPlayer1Bot] = useState('');
+  const [player2Bot, setPlayer2Bot] = useState('');
 
-  const handleEngineSelect = (player: 'player1' | 'player2', engineId: string) => {
-    dispatch({
-      type: 'game/setBotEngine',
-      payload: { player, engineId }
-    });
+  const handleStartBattle = () => {
+    if (player1Bot && player2Bot) {
+      dispatch(setBotEngine({ player: 'player1', engineId: player1Bot }));
+      dispatch(setBotEngine({ player: 'player2', engineId: player2Bot }));
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Select Bot Engines</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center">Select Bot Engines</h1>
         
-        <div className="grid grid-cols-2 gap-8">
-          {/* Player 1 Bot Selection */}
+        <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
-            <h2 className="text-xl font-bold mb-4">Player 1 Bot</h2>
+            <h2 className="text-2xl font-bold mb-4">Player 1 Bot</h2>
             <select 
               className="w-full bg-gray-800 p-2 rounded"
-              onChange={(e) => handleEngineSelect('player1', e.target.value)}
+              value={player1Bot}
+              onChange={(e) => setPlayer1Bot(e.target.value)}
             >
               <option value="">Select Bot Engine</option>
-              {availableBotEngines.map(engine => (
-                <option key={engine.id} value={engine.id}>
-                  {engine.name}
-                </option>
+              {botEngines.map(engine => (
+                <option key={engine.id} value={engine.id}>{engine.name}</option>
               ))}
             </select>
           </div>
-
-          {/* Player 2 Bot Selection */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Player 2 Bot</h2>
+            <h2 className="text-2xl font-bold mb-4">Player 2 Bot</h2>
             <select 
               className="w-full bg-gray-800 p-2 rounded"
-              onChange={(e) => handleEngineSelect('player2', e.target.value)}
+              value={player2Bot}
+              onChange={(e) => setPlayer2Bot(e.target.value)}
             >
               <option value="">Select Bot Engine</option>
-              {availableBotEngines.map(engine => (
-                <option key={engine.id} value={engine.id}>
-                  {engine.name}
-                </option>
+              {botEngines.map(engine => (
+                <option key={engine.id} value={engine.id}>{engine.name}</option>
               ))}
             </select>
           </div>
         </div>
 
-        <div className="mt-8">
-          {availableBotEngines.map(engine => (
-            <div key={engine.id} className="mb-4 p-4 bg-gray-800 rounded">
-              <h3 className="font-bold">{engine.name}</h3>
-              <p className="text-gray-400">{engine.description}</p>
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-4">Bot Descriptions</h2>
+          {botEngines.map(engine => (
+            <div key={engine.id} className="bg-gray-800 p-4 rounded mb-4">
+              <h3 className="text-xl font-bold mb-2">{engine.name}</h3>
+              <p>{engine.description}</p>
             </div>
           ))}
         </div>
+
+        <button
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleStartBattle}
+          disabled={!player1Bot || !player2Bot}
+        >
+          Start Bot Battle
+        </button>
       </div>
     </div>
   );

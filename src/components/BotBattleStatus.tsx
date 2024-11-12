@@ -8,16 +8,16 @@ const BotBattleStatus: React.FC = () => {
   return (
     <div className="bg-gray-800 p-4 rounded-lg">
       <h2 className="text-xl font-bold mb-2">Bot Battle Series</h2>
-      <div className="flex justify-between">
+      <div className="flex justify-between mb-2">
         <span>Match:</span>
         <span>{botBattleMatchCount}/7</span>
       </div>
-      <div className="flex justify-between">
-        <span>Player 1:</span>
+      <div className="flex justify-between mb-2">
+        <span className="text-blue-500">Player 1:</span>
         <span>{botBattleWins.player1} wins</span>
       </div>
       <div className="flex justify-between">
-        <span>Player 2 (Bot):</span>
+        <span className="text-red-500">Player 2:</span>
         <span>{botBattleWins.player2} wins</span>
       </div>
     </div>

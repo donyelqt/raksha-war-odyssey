@@ -147,78 +147,147 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     }
   };
 
-  return (
-    <div className="relative bg-gray-800 p-4 rounded-lg">
-      <div className="grid grid-cols-9 gap-0.5 bg-gray-700 p-2 rounded-lg">
-        {Array.from({ length: size * size }).map((_, index) => {
-          const x = Math.floor(index / size);
-          const y = index % size;
-          const position = { x, y };
-          
-          return (
-            <div
-              key={`${x}-${y}`}
-              className={`w-16 h-16 ${
-                targetingSkill && isValidSkillTarget(position)
-                  ? 'bg-green-200 hover:bg-green-300'
-                  : selectedCharacter && isValidPosition(position, selectedCharacter)
-                  ? 'bg-blue-200 hover:bg-blue-300'
-                  : 'bg-gray-600 hover:bg-gray-500'
-              } cursor-pointer transition-colors`}
-              onClick={() => handleSquareClick(position)}
-            />
-          );
-        })}
+  const renderGridCell = (x: number, y: number) => {
+    const position = { x, y };
+    const isValidTarget = targetingSkill && isValidSkillTarget(position);
+    const isValidMove = selectedCharacter && isValidPosition(position, selectedCharacter);
+    const isCastlePosition = (x === 0 && y === 8) || (x === 8 && y === 0);
+    const isCharacterPosition = getCharacterAtPosition(position) !== null;
+
+    // Create checkerboard pattern
+    const isAlternate = (x + y) % 2 === 0;
+    
+    let cellClass = `
+      w-16 h-16 relative
+      ${isAlternate ? 'bg-gray-700' : 'bg-gray-600'}
+      border border-gray-800
+      transition-all duration-300
+    `;
+
+    // Add hover and interaction states
+    if (isValidTarget) {
+      cellClass += ' hover:bg-green-600 ring-2 ring-green-400';
+    } else if (isValidMove) {
+      cellClass += ' hover:bg-blue-600 ring-2 ring-blue-400';
+    } else if (isCastlePosition) {
+      cellClass += ' bg-yellow-900/30';
+    } else if (isCharacterPosition) {
+      cellClass += ' bg-opacity-75';
+    } else {
+      cellClass += ' hover:bg-gray-500';
+    }
+
+    // Add movement indicators
+    const showMovementIndicator = selectedCharacter && isValidMove;
+
+    return (
+      <div
+        key={`${x}-${y}`}
+        className={cellClass}
+        onClick={() => handleSquareClick(position)}
+      >
+        {/* Grid coordinates (for development) */}
+        <span className="absolute bottom-0 right-1 text-xs text-gray-500 opacity-50">
+          {x},{y}
+        </span>
+
+        {/* Movement indicator */}
+        {showMovementIndicator && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" />
+          </div>
+        )}
+
+        {/* Target indicator */}
+        {isValidTarget && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-3 h-3 border-2 border-green-400 rounded-full animate-pulse" />
+          </div>
+        )}
+
+        {/* Castle position indicator */}
+        {isCastlePosition && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-full h-full bg-yellow-500 opacity-10" />
+          </div>
+        )}
       </div>
+    );
+  };
 
-      {/* Render Characters */}
-      {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) =>
-        playerData.characters.map((character: CharacterType) => (
-          <Character
-            key={character.id}
-            character={character}
-            isSelected={selectedCharacter?.id === character.id}
-            isCurrentPlayer={currentTurn === playerId}
-            onClick={() => {
-              if (currentTurn === playerId) {
-                dispatch(selectCharacter(character));
-              }
-            }}
-          />
-        ))
-      )}
+  return (
+    <div className="relative">
+      {/* Board background with border */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg -z-10" />
 
-      {/* Render Castles */}
-      {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) => (
-        <Castle
-          key={playerId}
-          position={playerData.castle}
-          playerId={playerId}
-        />
-      ))}
+      {/* Game board grid */}
+      <div className="relative p-4">
+        <div className="grid grid-cols-9 gap-0.5 bg-gray-800 p-2 rounded-lg shadow-lg">
+          {Array.from({ length: size * size }).map((_, index) => {
+            const x = Math.floor(index / size);
+            const y = index % size;
+            return renderGridCell(x, y);
+          })}
+        </div>
 
-      <SkillBar onSkillSelect={setTargetingSkill} />
+        {/* Characters layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) =>
+            playerData.characters.map((character: CharacterType) => (
+              <Character
+                key={character.id}
+                character={character}
+                isSelected={selectedCharacter?.id === character.id}
+                isCurrentPlayer={currentTurn === playerId}
+                onClick={() => {
+                  if (currentTurn === playerId) {
+                    dispatch(selectCharacter(character));
+                  }
+                }}
+              />
+            ))
+          )}
+        </div>
 
-      {abilityEffect && (
-        <AbilityEffect
-          type={abilityEffect.type}
-          sourcePosition={abilityEffect.sourcePosition}
-          targetPosition={abilityEffect.targetPosition}
-          onComplete={() => setAbilityEffect(null)}
-        />
-      )}
+        {/* Castles layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) => (
+            <Castle
+              key={playerId}
+              position={playerData.castle}
+              playerId={playerId}
+              isCurrentPlayer={currentTurn === playerId}
+            />
+          ))}
+        </div>
 
-      {combatTexts.map(({ id, text, type, position }) => (
-        <CombatText
-          key={id}
-          text={text}
-          type={type}
-          position={position}
-          onComplete={() => {
-            setCombatTexts(prev => prev.filter(t => t.id !== id));
-          }}
-        />
-      ))}
+        {/* Effects layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          {abilityEffect && (
+            <AbilityEffect
+              type={abilityEffect.type}
+              sourcePosition={abilityEffect.sourcePosition}
+              targetPosition={abilityEffect.targetPosition}
+              onComplete={() => setAbilityEffect(null)}
+            />
+          )}
+
+          {combatTexts.map(({ id, text, type, position }) => (
+            <CombatText
+              key={id}
+              text={text}
+              type={type}
+              position={position}
+              onComplete={() => {
+                setCombatTexts(prev => prev.filter(t => t.id !== id));
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Skill bar */}
+        <SkillBar onSkillSelect={setTargetingSkill} />
+      </div>
     </div>
   );
 };
