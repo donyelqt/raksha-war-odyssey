@@ -1,19 +1,18 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { matchHistoryService } from '../services/matchHistoryService';
+import { resetGame } from '../store/gameSlice';
 
 const WinCondition: React.FC = () => {
+  const dispatch = useDispatch();
   const gameState = useSelector((state: RootState) => state.game);
   const { winner, gameMode, turnCount, players } = gameState;
 
   React.useEffect(() => {
     if (winner) {
-      // Calculate duration based on turn count and timer values
       const avgTurnTime = gameMode === 'PVP' ? 10 : 3;
       const estimatedDuration = turnCount * avgTurnTime;
-      
-      // Save match to history with the full game state
       matchHistoryService.saveMatch(gameState, estimatedDuration);
     }
   }, [winner, gameMode, turnCount, players, gameState]);
@@ -32,13 +31,19 @@ const WinCondition: React.FC = () => {
         <div className="space-y-4">
           <button
             className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg"
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              dispatch(resetGame());
+              window.location.reload();
+            }}
           >
             Play Again
           </button>
           <button
             className="w-full px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg"
-            onClick={() => window.location.href = '/'}
+            onClick={() => {
+              dispatch(resetGame());
+              window.location.href = '/';
+            }}
           >
             Back to Menu
           </button>

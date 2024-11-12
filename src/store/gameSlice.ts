@@ -3,6 +3,28 @@ import { GameState, Position, Character, Skill } from '../types/game.types';
 import { botEngine } from '../services/botEngine';
 import { soundService } from '../services/soundService';
 
+const loadState = (): GameState | undefined => {
+  try {
+    const serializedState = localStorage.getItem('gameState');
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    console.error("Could not load state", err);
+    return undefined;
+  }
+};
+
+const saveState = (state: GameState) => {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem('gameState', serializedState);
+  } catch (err) {
+    console.error("Could not save state", err);
+  }
+};
+
 const initialCharacters: Character[] = [
   {
     id: 'warrior',
@@ -123,7 +145,7 @@ const initialCharacters: Character[] = [
   },
 ];
 
-const initialState: GameState = {
+const initialState: GameState = loadState() || {
   players: {
     player1: {
       characters: [],
@@ -420,6 +442,16 @@ const gameSlice = createSlice({
     setRandomFirstPlayer: (state: GameState) => {
       state.currentTurn = Math.random() < 0.5 ? 'player1' : 'player2';
     },
+
+    resetGame: () => {
+      localStorage.removeItem('gameState');
+      return initialState;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addDefaultCase((state) => {
+      saveState(state);
+    });
   },
 });
 
@@ -574,6 +606,7 @@ export const {
   startGame,
   hideGameOverview,
   setRandomFirstPlayer,
+  resetGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
