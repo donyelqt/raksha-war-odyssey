@@ -4,6 +4,8 @@ export interface Character {
   position: Position;
   skills: Skill[];
   health: number;
+  controlled: boolean;
+  defense: number;
 }
 
 export interface Position {
@@ -15,7 +17,8 @@ export interface Skill {
   id: string;
   name: string;
   range: number;
-  effect: string;
+  effect: 'damage' | 'heal' | 'defense' | 'control' | 'movement' | 'aoe_damage' | 'aoe_control';
+  cooldown: number;
 }
 
 export interface GameState {
@@ -23,6 +26,7 @@ export interface GameState {
     [key: string]: {
       characters: Character[];
       castle: Position;
+      consecutiveInvalidActions: number;
     };
   };
   currentTurn: string;
@@ -33,4 +37,6 @@ export interface GameState {
   availableCharacters: Character[];
   characterSelectionPhase: boolean;
   selectedCharacter: Character | null;
+  turnCount: number;
+  botBattleMatchCount: number;
 } 

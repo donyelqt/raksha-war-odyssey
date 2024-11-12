@@ -6,7 +6,8 @@ import Character from './Character';
 import Castle from './Castle';
 import SkillBar from './SkillBar';
 import { RootState } from '../store';
-import SkillEffect from './SkillEffect';
+import AbilityEffect from './AbilityEffect';
+import CombatText from './CombatText';
 
 interface GameBoardProps {
   size: number;
@@ -25,22 +26,41 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     type: 'damage' | 'heal' | 'defense' | 'control';
     position: Position;
   } | null>(null);
+  const [abilityEffect, setAbilityEffect] = useState<{
+    type: 'damage' | 'heal' | 'defense' | 'control' | 'movement' | 'aoe';
+    sourcePosition: Position;
+    targetPosition: Position;
+  } | null>(null);
+  const [combatTexts, setCombatTexts] = useState<Array<{
+    id: number;
+    text: string;
+    type: 'damage' | 'heal' | 'effect';
+    position: Position;
+  }>>([]);
 
   const handleSquareClick = (position: Position) => {
     if (!selectedCharacter) return;
 
     if (targetingSkill) {
-      setActiveEffect({
-        type: targetingSkill.effect as 'damage' | 'heal' | 'defense' | 'control',
-        position
+      setAbilityEffect({
+        type: getEffectType(targetingSkill.effect),
+        sourcePosition: selectedCharacter.position,
+        targetPosition: position
       });
-      
+
       dispatch(useSkill({
         characterId: selectedCharacter.id,
         skillId: targetingSkill.id,
         targetPosition: position
       }));
-      
+
+      setCombatTexts(prev => [...prev, {
+        id: Date.now(),
+        text: getSkillText(targetingSkill),
+        type: getTextType(targetingSkill.effect),
+        position
+      }]);
+
       setTargetingSkill(null);
       return;
     }
@@ -85,6 +105,52 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     const dx = Math.abs(position.x - selectedCharacter.position.x);
     const dy = Math.abs(position.y - selectedCharacter.position.y);
     return dx <= targetingSkill.range && dy <= targetingSkill.range;
+  };
+
+  const getEffectType = (effect: string): 'damage' | 'heal' | 'defense' | 'control' | 'movement' | 'aoe' => {
+    switch (effect) {
+      case 'damage':
+      case 'aoe_damage':
+        return 'damage';
+      case 'heal':
+        return 'heal';
+      case 'defense':
+        return 'defense';
+      case 'control':
+      case 'aoe_control':
+        return 'control';
+      case 'movement':
+        return 'movement';
+      default:
+        return 'damage';
+    }
+  };
+
+  const getSkillText = (skill: Skill): string => {
+    switch (skill.effect) {
+      case 'damage':
+        return '-30';
+      case 'heal':
+        return '+20';
+      case 'defense':
+        return 'DEF+';
+      case 'control':
+        return 'STUN';
+      default:
+        return skill.name;
+    }
+  };
+
+  const getTextType = (effect: string): 'damage' | 'heal' | 'effect' => {
+    switch (effect) {
+      case 'damage':
+      case 'aoe_damage':
+        return 'damage';
+      case 'heal':
+        return 'heal';
+      default:
+        return 'effect';
+    }
   };
 
   return (
@@ -146,6 +212,27 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
           onComplete={() => setActiveEffect(null)}
         />
       )}
+
+      {abilityEffect && (
+        <AbilityEffect
+          type={abilityEffect.type}
+          sourcePosition={abilityEffect.sourcePosition}
+          targetPosition={abilityEffect.targetPosition}
+          onComplete={() => setAbilityEffect(null)}
+        />
+      )}
+
+      {combatTexts.map(({ id, text, type, position }) => (
+        <CombatText
+          key={id}
+          text={text}
+          type={type}
+          position={position}
+          onComplete={() => {
+            setCombatTexts(prev => prev.filter(t => t.id !== id));
+          }}
+        />
+      ))}
     </div>
   );
 };

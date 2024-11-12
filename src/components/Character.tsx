@@ -22,6 +22,7 @@ const Character: React.FC<CharacterProps> = ({
       className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-14 h-14
         ${isSelected ? 'ring-4 ring-blue-500' : ''}
         ${isCurrentPlayer ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}
+        ${character.controlled ? 'grayscale' : ''}
         transition-all duration-200`}
       style={{
         left: `${character.position.x * 64 + 32}px`,
@@ -41,14 +42,23 @@ const Character: React.FC<CharacterProps> = ({
             <span>HP:</span>
             <span>{character.health}/100</span>
           </div>
+          {character.defense && (
+            <div className="flex justify-between mb-1">
+              <span>Defense:</span>
+              <span>+{character.defense}</span>
+            </div>
+          )}
           <div className="text-xs">
             {character.skills.map(skill => (
               <div key={skill.id} className="flex justify-between">
                 <span>{skill.name}</span>
-                <span>Range: {skill.range}</span>
+                <span>CD: {skill.cooldown}</span>
               </div>
             ))}
           </div>
+          {character.controlled && (
+            <div className="text-xs text-red-500 mt-1">Controlled</div>
+          )}
         </div>
       )}
     </div>

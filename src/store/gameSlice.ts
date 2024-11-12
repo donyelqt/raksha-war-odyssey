@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GameState, Position, Character } from '../types/game.types';
 import { botEngine } from '../services/botEngine';
+import { soundService } from '../services/soundService';
 
 const initialCharacters: Character[] = [
   {
@@ -9,8 +10,9 @@ const initialCharacters: Character[] = [
     position: { x: 0, y: 0 },
     health: 100,
     skills: [
-      { id: 'slash', name: 'Slash', range: 1, effect: 'damage' },
-      { id: 'shield', name: 'Shield Wall', range: 0, effect: 'defense' },
+      { id: 'slash', name: 'Slash', range: 1, effect: 'damage', cooldown: 0 },
+      { id: 'shield', name: 'Shield Wall', range: 0, effect: 'defense', cooldown: 3 },
+      { id: 'charge', name: 'Charge', range: 2, effect: 'movement', cooldown: 4 },
     ],
   },
   {
@@ -19,8 +21,20 @@ const initialCharacters: Character[] = [
     position: { x: 1, y: 0 },
     health: 80,
     skills: [
-      { id: 'arrow', name: 'Arrow Shot', range: 3, effect: 'damage' },
-      { id: 'trap', name: 'Set Trap', range: 2, effect: 'control' },
+      { id: 'arrow', name: 'Arrow Shot', range: 3, effect: 'damage', cooldown: 0 },
+      { id: 'trap', name: 'Set Trap', range: 2, effect: 'control', cooldown: 3 },
+      { id: 'volley', name: 'Arrow Volley', range: 4, effect: 'aoe_damage', cooldown: 5 },
+    ],
+  },
+  {
+    id: 'mage',
+    name: 'Mage',
+    position: { x: 2, y: 0 },
+    health: 70,
+    skills: [
+      { id: 'fireball', name: 'Fireball', range: 3, effect: 'damage', cooldown: 0 },
+      { id: 'teleport', name: 'Teleport', range: 3, effect: 'movement', cooldown: 4 },
+      { id: 'frostNova', name: 'Frost Nova', range: 2, effect: 'aoe_control', cooldown: 5 },
     ],
   },
 ];
@@ -114,30 +128,65 @@ const gameSlice = createSlice({
       
       if (character) {
         const skill = character.skills.find(s => s.id === skillId);
-        if (skill) {
+        if (skill && skill.cooldown === 0) {
           switch (skill.effect) {
             case 'damage':
-              // Deal damage to target
               const targetCharacter = getCharacterAtPosition(state, targetPosition);
               if (targetCharacter) {
                 targetCharacter.health -= 30;
+                soundService.play('attack');
                 if (targetCharacter.health <= 0) {
                   targetCharacter.health = 100;
                   targetCharacter.position = getInitialPosition(targetCharacter.id, getPlayerIdByCharacter(state, targetCharacter));
+                  soundService.play('defeat');
                 }
               }
               break;
             case 'heal':
-              // Heal the character
               character.health = Math.min(character.health + 20, 100);
+              soundService.play('heal');
               break;
             case 'defense':
-              // Implement defense buff (you may need to add a defense property to characters)
+              character.defense = (character.defense || 0) + 20;
+              soundService.play('defense');
               break;
             case 'control':
-              // Implement control effect (e.g., stun or root)
+              const controlledCharacter = getCharacterAtPosition(state, targetPosition);
+              if (controlledCharacter) {
+                controlledCharacter.controlled = true;
+                soundService.play('control');
+              }
+              break;
+            case 'movement':
+              character.position = targetPosition;
+              soundService.play('move');
+              break;
+            case 'aoe_damage':
+              for (const player of Object.values(state.players)) {
+                for (const targetChar of player.characters) {
+                  if (isInRange(targetChar.position, targetPosition, 2)) {
+                    targetChar.health -= 20;
+                    if (targetChar.health <= 0) {
+                      targetChar.health = 100;
+                      targetChar.position = getInitialPosition(targetChar.id, getPlayerIdByCharacter(state, targetChar));
+                    }
+                  }
+                }
+              }
+              soundService.play('aoe');
+              break;
+            case 'aoe_control':
+              for (const player of Object.values(state.players)) {
+                for (const targetChar of player.characters) {
+                  if (isInRange(targetChar.position, targetPosition, 2)) {
+                    targetChar.controlled = true;
+                  }
+                }
+              }
+              soundService.play('aoe');
               break;
           }
+          skill.cooldown = getSkillCooldown(skill.id);
           state.selectedCharacter = null;
           state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
           state.turnTimer = 10;
@@ -234,4 +283,30 @@ const getPlayerIdByCharacter = (state: GameState, character: Character): string 
     }
   }
   return 'player1'; // Default fallback
+};
+
+const isInRange = (pos1: Position, pos2: Position, range: number) => {
+  const dx = Math.abs(pos1.x - pos2.x);
+  const dy = Math.abs(pos1.y - pos2.y);
+  return dx <= range && dy <= range;
+};
+
+const getSkillCooldown = (skillId: string) => {
+  switch (skillId) {
+    case 'slash':
+    case 'arrow':
+    case 'fireball':
+      return 0;
+    case 'shield':
+    case 'trap':
+      return 3;
+    case 'charge':
+    case 'teleport':
+      return 4;
+    case 'volley':
+    case 'frostNova':
+      return 5;
+    default:
+      return 0;
+  }
 };

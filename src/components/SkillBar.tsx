@@ -13,7 +13,9 @@ const SkillBar: React.FC<SkillBarProps> = ({ onSkillSelect }) => {
   if (!selectedCharacter) return null;
 
   const handleSkillClick = (skill: Skill) => {
-    onSkillSelect(skill);
+    if (skill.cooldown === 0) {
+      onSkillSelect(skill);
+    }
   };
 
   return (
@@ -21,10 +23,18 @@ const SkillBar: React.FC<SkillBarProps> = ({ onSkillSelect }) => {
       {selectedCharacter.skills.map((skill: Skill) => (
         <button
           key={skill.id}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white"
+          className={`px-4 py-2 rounded text-white relative ${
+            skill.cooldown === 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 cursor-not-allowed'
+          }`}
           onClick={() => handleSkillClick(skill)}
+          disabled={skill.cooldown > 0}
         >
           {skill.name}
+          {skill.cooldown > 0 && (
+            <span className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs">
+              {skill.cooldown}
+            </span>
+          )}
         </button>
       ))}
       <button
