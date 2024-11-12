@@ -39,4 +39,8 @@ export interface GameState {
   selectedCharacter: Character | null;
   turnCount: number;
   botBattleMatchCount: number;
+  botBattleWins: {
+    player1: number;
+    player2: number;
+  };
 } 

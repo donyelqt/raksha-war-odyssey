@@ -5,6 +5,7 @@ import CharacterSelection from './components/CharacterSelection';
 import GameInfo from './components/GameInfo';
 import MatchHistory from './components/MatchHistory';
 import GameStats from './components/GameStats';
+import BotBattleStatus from './components/BotBattleStatus';
 import { RootState } from './store';
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
               <div className="w-64 space-y-4">
                 <GameInfo />
                 <GameStats />
+                {gameMode === 'BOT' && <BotBattleStatus />}
                 <MatchHistory />
               </div>
             </div>

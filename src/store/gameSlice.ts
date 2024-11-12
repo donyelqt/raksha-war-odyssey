@@ -68,6 +68,10 @@ const initialState: GameState = {
   gameOver: false,
   turnCount: 0,
   botBattleMatchCount: 0,
+  botBattleWins: {
+    player1: 0,
+    player2: 0,
+  },
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -199,6 +203,14 @@ const gameSlice = createSlice({
           state.botBattleMatchCount++;
         }
       }
+
+      if (state.winner) {
+        if (state.gameMode === 'BOT') {
+          gameSlice.caseReducers.endBotBattleMatch(state);
+        } else {
+          state.gameOver = true;
+        }
+      }
     },
 
     executeBotMove: (state: GameState) => {
@@ -246,6 +258,31 @@ const gameSlice = createSlice({
         }
         
         gameSlice.caseReducers.endTurn(state);
+      }
+    },
+
+    endBotBattleMatch: (state: GameState) => {
+      state.botBattleMatchCount++;
+      if (state.winner) {
+        state.botBattleWins[state.winner as 'player1' | 'player2']++;
+      }
+
+      if (state.botBattleMatchCount < 7 && 
+          state.botBattleWins.player1 < 4 && 
+          state.botBattleWins.player2 < 4) {
+        // Reset the game state for the next match
+        state.players.player1.characters = [];
+        state.players.player2.characters = [];
+        state.characterSelectionPhase = true;
+        state.currentTurn = 'player1';
+        state.turnTimer = 10;
+        state.winner = null;
+        state.gameOver = false;
+        state.selectedCharacter = null;
+        state.turnCount = 0;
+      } else {
+        // End of the best-of-7 series
+        state.gameOver = true;
       }
     },
   },
@@ -392,7 +429,8 @@ export const {
   endTurn,
   updateTimer,
   checkWinCondition,
-  executeBotMove 
+  executeBotMove,
+  endBotBattleMatch 
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
