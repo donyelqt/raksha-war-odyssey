@@ -90,3 +90,28 @@ This game is built using the **MERN Stack**, utilizing **React Vite**, **Tailwin
 - **TypeScript**: A superset of JavaScript for type safety.
 
 ---
+
+/raksha-war-odyssey
+|-- /public
+|   |-- index.html          # Main HTML file
+|   |-- /assets             # Images and other assets
+|
+|-- /src
+|   |-- /components         # Reusable React components (e.g., GameBoard, Character, etc.)
+|   |-- /services           # APIs and game logic
+|   |-- /pages              # Pages for the app (e.g., HomePage, GamePage, etc.)
+|   |-- /store              # Redux store or any state management
+|   |-- /styles             # Global styles (Tailwind configuration, custom styles)
+|   |-- App.tsx             # Main React App component
+|   |-- index.tsx           # Entry point for React app
+|
+|-- /server
+|   |-- /controllers        # Game logic for backend (match, player actions, etc.)
+|   |-- /models             # MongoDB models for user data, game data, etc.
+|   |-- /routes             # API routes for game logic
+|   |-- server.ts           # Express server setup
+|
+|-- package.json            # Project dependencies and scripts
+|-- tsconfig.json           # TypeScript configuration
+|-- tailwind.config.js      # Tailwind configuration
+|-- .gitignore              # Git ignore file
