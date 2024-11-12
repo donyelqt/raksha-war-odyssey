@@ -178,9 +178,12 @@ const gameSlice = createSlice({
         state.players[currentPlayer].characters.push(character);
         state.currentTurn = currentPlayer === 'player1' ? 'player2' : 'player1';
       }
+      
       if (state.players.player1.characters.length === 2 && 
           state.players.player2.characters.length === 2) {
         state.characterSelectionPhase = false;
+        state.gameStarted = true;
+        state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
       }
     },
 
@@ -380,6 +383,7 @@ const gameSlice = createSlice({
       state.gameMode = action.payload;
       state.turnTimer = action.payload === 'PVP' ? 10 : 3;
       state.characterSelectionPhase = true;
+      state.gameStarted = false;
     },
 
     setBotEngine: (state: GameState, action: PayloadAction<{ player: 'player1' | 'player2', engineId: string }>) => {

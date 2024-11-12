@@ -15,7 +15,7 @@ function App() {
     gameStarted
   } = useSelector((state: RootState) => state.game);
 
-  // Show find match screen if no game mode selected
+  // Step 1: Find Match Screen (Initial Screen)
   if (!gameMode) {
     return <FindMatch onSelectMode={(mode) => {
       dispatch({ type: 'game/setGameMode', payload: mode });
@@ -26,17 +26,17 @@ function App() {
     }} />;
   }
 
-  // Show bot engine selection for BOT mode before character selection
+  // Step 2a: Bot Engine Selection (Only for BOT mode)
   if (gameMode === 'BOT' && (!botEngines.player1 || !botEngines.player2)) {
     return <BotEngineSelection />;
   }
 
-  // Show character selection before game starts
-  if (characterSelectionPhase) {
+  // Step 2b: Character Selection Phase
+  if (!gameStarted) {
     return <CharacterSelectionPhase />;
   }
 
-  // Show main game layout
+  // Step 3: Main Game
   return <GameLayout />;
 }
 
