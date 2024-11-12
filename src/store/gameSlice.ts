@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GameState, Position, Character } from '../types/game.types';
+import { GameState, Position, Character, Skill } from '../types/game.types';
 import { botEngine } from '../services/botEngine';
 import { soundService } from '../services/soundService';
 
@@ -93,9 +93,12 @@ const gameSlice = createSlice({
       const { characterId, position } = action.payload;
       const currentPlayer = state.currentTurn;
       const character = state.players[currentPlayer].characters.find(c => c.id === characterId);
-      if (character) {
+      if (character && isValidMove(character.position, position)) {
         character.position = position;
         state.selectedCharacter = null;
+        endTurn(state);
+      } else {
+        handleInvalidAction(state);
       }
     },
 
@@ -107,13 +110,19 @@ const gameSlice = createSlice({
       const attacker = state.players[currentPlayer].characters.find(c => c.id === attackerId);
       const target = state.players[otherPlayer].characters.find(c => c.id === targetId);
       
-      if (attacker && target) {
-        target.health -= 20;
+      if (attacker && target && canAttack(attacker, target)) {
+        const damage = 20 - (target.defense || 0);
+        target.health -= Math.max(damage, 0);
+        soundService.play('attack');
         if (target.health <= 0) {
           target.health = 100;
           target.position = getInitialPosition(targetId, otherPlayer);
+          soundService.play('defeat');
         }
         state.selectedCharacter = null;
+        endTurn(state);
+      } else {
+        handleInvalidAction(state);
       }
     },
 
@@ -128,76 +137,36 @@ const gameSlice = createSlice({
       
       if (character) {
         const skill = character.skills.find(s => s.id === skillId);
-        if (skill && skill.cooldown === 0) {
-          switch (skill.effect) {
-            case 'damage':
-              const targetCharacter = getCharacterAtPosition(state, targetPosition);
-              if (targetCharacter) {
-                targetCharacter.health -= 30;
-                soundService.play('attack');
-                if (targetCharacter.health <= 0) {
-                  targetCharacter.health = 100;
-                  targetCharacter.position = getInitialPosition(targetCharacter.id, getPlayerIdByCharacter(state, targetCharacter));
-                  soundService.play('defeat');
-                }
-              }
-              break;
-            case 'heal':
-              character.health = Math.min(character.health + 20, 100);
-              soundService.play('heal');
-              break;
-            case 'defense':
-              character.defense = (character.defense || 0) + 20;
-              soundService.play('defense');
-              break;
-            case 'control':
-              const controlledCharacter = getCharacterAtPosition(state, targetPosition);
-              if (controlledCharacter) {
-                controlledCharacter.controlled = true;
-                soundService.play('control');
-              }
-              break;
-            case 'movement':
-              character.position = targetPosition;
-              soundService.play('move');
-              break;
-            case 'aoe_damage':
-              for (const player of Object.values(state.players)) {
-                for (const targetChar of player.characters) {
-                  if (isInRange(targetChar.position, targetPosition, 2)) {
-                    targetChar.health -= 20;
-                    if (targetChar.health <= 0) {
-                      targetChar.health = 100;
-                      targetChar.position = getInitialPosition(targetChar.id, getPlayerIdByCharacter(state, targetChar));
-                    }
-                  }
-                }
-              }
-              soundService.play('aoe');
-              break;
-            case 'aoe_control':
-              for (const player of Object.values(state.players)) {
-                for (const targetChar of player.characters) {
-                  if (isInRange(targetChar.position, targetPosition, 2)) {
-                    targetChar.controlled = true;
-                  }
-                }
-              }
-              soundService.play('aoe');
-              break;
-          }
+        if (skill && skill.cooldown === 0 && isValidSkillUse(character.position, targetPosition, skill)) {
+          applySkillEffect(state, character, skill, targetPosition);
           skill.cooldown = getSkillCooldown(skill.id);
           state.selectedCharacter = null;
-          state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
-          state.turnTimer = 10;
+          endTurn(state);
+        } else {
+          handleInvalidAction(state);
         }
       }
     },
 
     endTurn: (state: GameState) => {
       state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
-      state.turnTimer = 10;
-      state.selectedCharacter = null;
+      state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
+      state.turnCount++;
+      state.players[state.currentTurn].consecutiveInvalidActions = 0;
+
+      // Reduce cooldowns
+      for (const player of Object.values(state.players)) {
+        for (const character of player.characters) {
+          for (const skill of character.skills) {
+            if (skill.cooldown > 0) {
+              skill.cooldown--;
+            }
+          }
+          if (character.controlled) {
+            character.controlled = false;
+          }
+        }
+      }
     },
 
     updateTimer: (state: GameState, action: PayloadAction<number>) => {
@@ -216,6 +185,9 @@ const gameSlice = createSlice({
           Math.abs(attackingCharacter.position.y - defendingCastle.y) <= 1) {
         state.winner = currentPlayer;
         state.gameOver = true;
+        if (state.gameMode === 'BOT') {
+          state.botBattleMatchCount++;
+        }
       }
     },
 
@@ -228,29 +200,154 @@ const gameSlice = createSlice({
             if (action.target) {
               const character = state.players[state.currentTurn].characters
                 .find(c => c.id === action.characterId);
-              if (character) {
+              if (character && isValidMove(character.position, action.target)) {
                 character.position = action.target;
               }
             }
             break;
             
           case 'attack':
-            // Handle attack action
+            if (action.target) {
+              const attacker = state.players[state.currentTurn].characters
+                .find(c => c.id === action.characterId);
+              const target = getCharacterAtPosition(state, action.target);
+              if (attacker && target && canAttack(attacker, target)) {
+                const damage = 20 - (target.defense || 0);
+                target.health -= Math.max(damage, 0);
+                if (target.health <= 0) {
+                  target.health = 100;
+                  target.position = getInitialPosition(target.id, getPlayerIdByCharacter(state, target));
+                }
+              }
+            }
             break;
             
           case 'skill':
             if (action.target && action.skillId) {
-              // Handle skill action
+              const character = state.players[state.currentTurn].characters
+                .find(c => c.id === action.characterId);
+              const skill = character?.skills.find(s => s.id === action.skillId);
+              if (character && skill && skill.cooldown === 0 && isValidSkillUse(character.position, action.target, skill)) {
+                applySkillEffect(state, character, skill, action.target);
+                skill.cooldown = getSkillCooldown(skill.id);
+              }
             }
             break;
         }
         
-        state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
-        state.turnTimer = 10;
+        endTurn(state);
       }
     },
   },
 });
+
+// Helper functions
+
+const isValidMove = (from: Position, to: Position): boolean => {
+  const dx = Math.abs(from.x - to.x);
+  const dy = Math.abs(from.y - to.y);
+  return dx <= 1 && dy <= 1 && dx + dy <= 2;
+};
+
+const canAttack = (attacker: Character, target: Character): boolean => {
+  const dx = Math.abs(attacker.position.x - target.position.x);
+  const dy = Math.abs(attacker.position.y - target.position.y);
+  return dx <= 1 && dy <= 1;
+};
+
+const isValidSkillUse = (from: Position, to: Position, skill: Skill): boolean => {
+  const dx = Math.abs(from.x - to.x);
+  const dy = Math.abs(from.y - to.y);
+  return dx <= skill.range && dy <= skill.range;
+};
+
+const applySkillEffect = (state: GameState, character: Character, skill: Skill, targetPosition: Position) => {
+  switch (skill.effect) {
+    case 'damage':
+      const targetCharacter = getCharacterAtPosition(state, targetPosition);
+      if (targetCharacter) {
+        const damage = 30 - (targetCharacter.defense || 0);
+        targetCharacter.health -= Math.max(damage, 0);
+        soundService.play('attack');
+        if (targetCharacter.health <= 0) {
+          targetCharacter.health = 100;
+          targetCharacter.position = getInitialPosition(targetCharacter.id, getPlayerIdByCharacter(state, targetCharacter));
+          soundService.play('defeat');
+        }
+      }
+      break;
+    case 'heal':
+      character.health = Math.min(character.health + 20, 100);
+      soundService.play('heal');
+      break;
+    case 'defense':
+      character.defense = (character.defense || 0) + 20;
+      soundService.play('defense');
+      break;
+    case 'control':
+      const controlledCharacter = getCharacterAtPosition(state, targetPosition);
+      if (controlledCharacter) {
+        controlledCharacter.controlled = true;
+        soundService.play('control');
+      }
+      break;
+    case 'movement':
+      character.position = targetPosition;
+      soundService.play('move');
+      break;
+    case 'aoe_damage':
+    case 'aoe_control':
+      for (const player of Object.values(state.players)) {
+        for (const targetChar of player.characters) {
+          if (isInRange(targetChar.position, targetPosition, 2)) {
+            if (skill.effect === 'aoe_damage') {
+              const damage = 20 - (targetChar.defense || 0);
+              targetChar.health -= Math.max(damage, 0);
+              if (targetChar.health <= 0) {
+                targetChar.health = 100;
+                targetChar.position = getInitialPosition(targetChar.id, getPlayerIdByCharacter(state, targetChar));
+              }
+            } else {
+              targetChar.controlled = true;
+            }
+          }
+        }
+      }
+      soundService.play('aoe');
+      break;
+  }
+};
+
+const handleInvalidAction = (state: GameState) => {
+  state.players[state.currentTurn].consecutiveInvalidActions++;
+  if (state.players[state.currentTurn].consecutiveInvalidActions >= 3) {
+    state.winner = state.currentTurn === 'player1' ? 'player2' : 'player1';
+    state.gameOver = true;
+  } else {
+    endTurn(state);
+  }
+};
+
+const endTurn = (state: GameState) => {
+  state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+  state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
+  state.turnCount++;
+  state.players[state.currentTurn].consecutiveInvalidActions = 0;
+
+  // Reduce cooldowns
+  for (const player of Object.values(state.players)) {
+    for (const character of player.characters) {
+      for (const skill of character.skills) {
+        if (skill.cooldown > 0) {
+          skill.cooldown--;
+        }
+      }
+      if (character.controlled) {
+        character.controlled = false;
+      }
+    }
+  }
+};
 
 export const { 
   selectCharacterInPhase,

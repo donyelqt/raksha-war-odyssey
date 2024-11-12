@@ -4,6 +4,7 @@ import GameBoard from './components/GameBoard';
 import CharacterSelection from './components/CharacterSelection';
 import GameInfo from './components/GameInfo';
 import MatchHistory from './components/MatchHistory';
+import GameStats from './components/GameStats';
 import { RootState } from './store';
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
               </div>
               <div className="w-64 space-y-4">
                 <GameInfo />
+                <GameStats />
                 <MatchHistory />
               </div>
             </div>
@@ -60,6 +62,9 @@ function App() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-gray-800 p-8 rounded-lg text-center">
               <h2 className="text-3xl font-bold mb-4">Game Over</h2>
+              <div className="mb-4">
+                <GameStats />
+              </div>
               <button
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Position, Character as CharacterType, Skill } from '../types/game.types';
-import { moveCharacter, attackCharacter, selectCharacter, checkWinCondition, useSkill } from '../store/gameSlice';
+import { PlayerData } from '../types/store.types';
+import { moveCharacter, attackCharacter, selectCharacter, checkWinCondition, useSkill, executeBotMove } from '../store/gameSlice';
 import Character from './Character';
 import Castle from './Castle';
 import SkillBar from './SkillBar';
@@ -13,19 +14,10 @@ interface GameBoardProps {
   size: number;
 }
 
-interface PlayerData {
-  characters: CharacterType[];
-  castle: Position;
-}
-
 const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   const dispatch = useDispatch();
-  const { players, currentTurn, selectedCharacter } = useSelector((state: RootState) => state.game);
+  const { players, currentTurn, selectedCharacter, gameMode, turnTimer } = useSelector((state: RootState) => state.game);
   const [targetingSkill, setTargetingSkill] = useState<Skill | null>(null);
-  const [activeEffect, setActiveEffect] = useState<{
-    type: 'damage' | 'heal' | 'defense' | 'control';
-    position: Position;
-  } | null>(null);
   const [abilityEffect, setAbilityEffect] = useState<{
     type: 'damage' | 'heal' | 'defense' | 'control' | 'movement' | 'aoe';
     sourcePosition: Position;
@@ -38,44 +30,52 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     position: Position;
   }>>([]);
 
+  useEffect(() => {
+    if (gameMode === 'BOT' && currentTurn === 'player2') {
+      const timer = setTimeout(() => {
+        dispatch(executeBotMove());
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameMode, currentTurn, dispatch]);
+
+  useEffect(() => {
+    if (turnTimer === 0) {
+      dispatch({ type: 'game/endTurn' });
+    }
+  }, [turnTimer, dispatch]);
+
   const handleSquareClick = (position: Position) => {
     if (!selectedCharacter) return;
 
     if (targetingSkill) {
-      setAbilityEffect({
-        type: getEffectType(targetingSkill.effect),
-        sourcePosition: selectedCharacter.position,
-        targetPosition: position
-      });
-
       dispatch(useSkill({
         characterId: selectedCharacter.id,
         skillId: targetingSkill.id,
         targetPosition: position
       }));
-
+      setAbilityEffect({
+        type: getEffectType(targetingSkill.effect),
+        sourcePosition: selectedCharacter.position,
+        targetPosition: position
+      });
       setCombatTexts(prev => [...prev, {
         id: Date.now(),
         text: getSkillText(targetingSkill),
         type: getTextType(targetingSkill.effect),
         position
       }]);
-
       setTargetingSkill(null);
-      return;
+    } else {
+      const targetCharacter = getCharacterAtPosition(position);
+      if (targetCharacter && targetCharacter.id !== selectedCharacter.id) {
+        dispatch(attackCharacter({ attackerId: selectedCharacter.id, targetId: targetCharacter.id }));
+      } else {
+        dispatch(moveCharacter({ characterId: selectedCharacter.id, position }));
+      }
     }
 
-    const isValidMove = isValidPosition(position, selectedCharacter);
-    if (isValidMove) {
-      dispatch(moveCharacter({ characterId: selectedCharacter.id, position }));
-      dispatch(checkWinCondition());
-    }
-
-    const targetCharacter = getCharacterAtPosition(position);
-    if (targetCharacter && canAttack(selectedCharacter, targetCharacter)) {
-      dispatch(attackCharacter({ attackerId: selectedCharacter.id, targetId: targetCharacter.id }));
-      dispatch(checkWinCondition());
-    }
+    dispatch(checkWinCondition());
   };
 
   const isValidPosition = (position: Position, character: CharacterType) => {
@@ -204,14 +204,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       ))}
 
       <SkillBar onSkillSelect={setTargetingSkill} />
-
-      {activeEffect && (
-        <SkillEffect
-          type={activeEffect.type}
-          position={activeEffect.position}
-          onComplete={() => setActiveEffect(null)}
-        />
-      )}
 
       {abilityEffect && (
         <AbilityEffect
