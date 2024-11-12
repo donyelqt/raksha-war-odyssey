@@ -148,7 +148,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-gray-800 p-4 rounded-lg">
       <div className="grid grid-cols-9 gap-0.5 bg-gray-700 p-2 rounded-lg">
         {Array.from({ length: size * size }).map((_, index) => {
           const x = Math.floor(index / size);
@@ -163,7 +163,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
                   ? 'bg-green-200 hover:bg-green-300'
                   : selectedCharacter && isValidPosition(position, selectedCharacter)
                   ? 'bg-blue-200 hover:bg-blue-300'
-                  : 'bg-gray-200 hover:bg-gray-300'
+                  : 'bg-gray-600 hover:bg-gray-500'
               } cursor-pointer transition-colors`}
               onClick={() => handleSquareClick(position)}
             />
