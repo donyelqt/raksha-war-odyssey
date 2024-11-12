@@ -66,6 +66,8 @@ const initialState: GameState = {
   selectedCharacter: null,
   winner: null,
   gameOver: false,
+  turnCount: 0,
+  botBattleMatchCount: 0,
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -336,41 +338,6 @@ const handleInvalidAction = (state: GameState) => {
   }
 };
 
-const endTurn = (state: GameState) => {
-  state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
-  state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
-  state.turnCount++;
-  state.players[state.currentTurn].consecutiveInvalidActions = 0;
-
-  // Reduce cooldowns
-  for (const player of Object.values(state.players)) {
-    for (const character of player.characters) {
-      for (const skill of character.skills) {
-        if (skill.cooldown > 0) {
-          skill.cooldown--;
-        }
-      }
-      if (character.controlled) {
-        character.controlled = false;
-      }
-    }
-  }
-};
-
-export const { 
-  selectCharacterInPhase,
-  selectCharacter, 
-  moveCharacter, 
-  attackCharacter,
-  useSkill,
-  endTurn, 
-  updateTimer,
-  checkWinCondition,
-  executeBotMove 
-} = gameSlice.actions;
-
-export default gameSlice.reducer;
-
 const getCharacterAtPosition = (state: GameState, position: Position) => {
   for (const player of Object.values(state.players)) {
     const character = player.characters.find(
@@ -415,3 +382,17 @@ const getSkillCooldown = (skillId: string) => {
       return 0;
   }
 };
+
+export const { 
+  selectCharacterInPhase,
+  selectCharacter, 
+  moveCharacter, 
+  attackCharacter,
+  useSkill,
+  endTurn: endTurnAction,
+  updateTimer,
+  checkWinCondition,
+  executeBotMove 
+} = gameSlice.actions;
+
+export default gameSlice.reducer;
