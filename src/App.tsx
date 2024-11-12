@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
 import FindMatch from './components/FindMatch';
-import CharacterSelection from './components/CharacterSelection';
+import CharacterSelectionPhase from './components/CharacterSelectionPhase';
 import GameLayout from './components/GameLayout';
 import BotEngineSelection from './components/BotEngineSelection';
 
@@ -33,7 +33,7 @@ function App() {
 
   // Show character selection before game starts
   if (characterSelectionPhase) {
-    return <CharacterSelection />;
+    return <CharacterSelectionPhase />;
   }
 
   // Show main game layout
