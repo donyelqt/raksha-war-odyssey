@@ -22,7 +22,6 @@ const initialCharacters: Character[] = [
       { id: 'trap', name: 'Set Trap', range: 2, effect: 'control' },
     ],
   },
-  // Add more characters as needed
 ];
 
 const initialState: GameState = {
@@ -42,30 +41,49 @@ const initialState: GameState = {
   availableCharacters: initialCharacters,
   characterSelectionPhase: true,
   selectedCharacter: null,
+  winner: null,
+  gameOver: false,
+};
+
+const getInitialPosition = (characterId: string, playerId: string): Position => {
+  if (playerId === 'player1') {
+    return characterId === 'warrior' ? { x: 0, y: 7 } : { x: 1, y: 7 };
+  }
+  return characterId === 'warrior' ? { x: 8, y: 1 } : { x: 7, y: 1 };
 };
 
 const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
+    selectCharacterInPhase: (state, action: PayloadAction<Character>) => {
+      const currentPlayer = state.currentTurn;
+      if (state.players[currentPlayer].characters.length < 2) {
+        const character = { ...action.payload };
+        character.position = getInitialPosition(character.id, currentPlayer);
+        state.players[currentPlayer].characters.push(character);
+        state.currentTurn = currentPlayer === 'player1' ? 'player2' : 'player1';
+      }
+      if (state.players.player1.characters.length === 2 && 
+          state.players.player2.characters.length === 2) {
+        state.characterSelectionPhase = false;
+      }
+    },
+
     selectCharacter: (state, action: PayloadAction<Character>) => {
       state.selectedCharacter = action.payload;
     },
+
     moveCharacter: (state, action: PayloadAction<{characterId: string, position: Position}>) => {
       const { characterId, position } = action.payload;
       const currentPlayer = state.currentTurn;
       const character = state.players[currentPlayer].characters.find(c => c.id === characterId);
       if (character) {
         character.position = position;
+        state.selectedCharacter = null;
       }
     },
-    endTurn: (state) => {
-      state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
-      state.turnTimer = 10;
-    },
-    updateTimer: (state, action: PayloadAction<number>) => {
-      state.turnTimer = action.payload;
-    },
+
     attackCharacter: (state, action: PayloadAction<{attackerId: string, targetId: string}>) => {
       const { attackerId, targetId } = action.payload;
       const currentPlayer = state.currentTurn;
@@ -75,16 +93,43 @@ const gameSlice = createSlice({
       const target = state.players[otherPlayer].characters.find(c => c.id === targetId);
       
       if (attacker && target) {
-        target.health -= 20; // Basic damage value
+        target.health -= 20;
         if (target.health <= 0) {
-          // Reset character to starting position
           target.health = 100;
           target.position = getInitialPosition(targetId, otherPlayer);
         }
         state.selectedCharacter = null;
-        dispatch(endTurn());
       }
     },
+
+    useSkill: (state, action: PayloadAction<{
+      characterId: string,
+      skillId: string,
+      targetPosition: Position
+    }>) => {
+      const { characterId, skillId, targetPosition } = action.payload;
+      const currentPlayer = state.currentTurn;
+      const character = state.players[currentPlayer].characters.find(c => c.id === characterId);
+      
+      if (character) {
+        const skill = character.skills.find(s => s.id === skillId);
+        if (skill) {
+          // Implement skill effects here
+          state.selectedCharacter = null;
+        }
+      }
+    },
+
+    endTurn: (state) => {
+      state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+      state.turnTimer = 10;
+      state.selectedCharacter = null;
+    },
+
+    updateTimer: (state, action: PayloadAction<number>) => {
+      state.turnTimer = action.payload;
+    },
+
     checkWinCondition: (state) => {
       const currentPlayer = state.currentTurn;
       const otherPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
@@ -103,11 +148,14 @@ const gameSlice = createSlice({
 });
 
 export const { 
+  selectCharacterInPhase,
   selectCharacter, 
   moveCharacter, 
-  endTurn, 
-  updateTimer, 
   attackCharacter,
+  useSkill,
+  endTurn, 
+  updateTimer,
   checkWinCondition 
 } = gameSlice.actions;
-export default gameSlice.reducer; 
+
+export default gameSlice.reducer;
