@@ -30,4 +30,7 @@ export interface GameState {
   gameMode: 'PVP' | 'BOT';
   winner: string | null;
   gameOver: boolean;
+  availableCharacters: Character[];
+  characterSelectionPhase: boolean;
+  selectedCharacter: Character | null;
 } 

@@ -60,7 +60,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   };
 
   const getCharacterAtPosition = (position: Position) => {
-    for (const player of Object.values(players)) {
+    for (const [_, player] of Object.entries(players)) {
       const character = player.characters.find(
         (c: CharacterType) => c.position.x === position.x && c.position.y === position.y
       );
@@ -107,8 +107,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       </div>
 
       {/* Render Characters */}
-      {Object.entries(players).map(([playerId, player]) =>
-        player.characters.map((character: CharacterType) => (
+      {Object.entries(players).map(([playerId, playerData]) =>
+        playerData.characters.map((character: CharacterType) => (
           <Character
             key={character.id}
             character={character}
@@ -124,10 +124,10 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       )}
 
       {/* Render Castles */}
-      {Object.entries(players).map(([playerId, player]) => (
+      {Object.entries(players).map(([playerId, playerData]) => (
         <Castle
           key={playerId}
-          position={player.castle}
+          position={playerData.castle}
           playerId={playerId}
         />
       ))}

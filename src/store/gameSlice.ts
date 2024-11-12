@@ -227,11 +227,11 @@ const getCharacterAtPosition = (state: GameState, position: Position) => {
   return null;
 };
 
-const getPlayerIdByCharacter = (state: GameState, character: Character) => {
+const getPlayerIdByCharacter = (state: GameState, character: Character): string => {
   for (const [playerId, player] of Object.entries(state.players)) {
     if (player.characters.some(c => c.id === character.id)) {
       return playerId;
     }
   }
-  return null;
+  return 'player1'; // Default fallback
 };

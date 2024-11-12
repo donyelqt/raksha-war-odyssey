@@ -4,15 +4,17 @@ import { Character as CharacterType } from '../types/game.types';
 interface CharacterProps {
   character: CharacterType;
   isSelected: boolean;
+  isCurrentPlayer: boolean;
   onClick: () => void;
 }
 
-const Character: React.FC<CharacterProps> = ({ character, isSelected, onClick }) => {
+const Character: React.FC<CharacterProps> = ({ character, isSelected, isCurrentPlayer, onClick }) => {
   return (
     <div
       className={`absolute transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full 
         ${isSelected ? 'ring-4 ring-blue-500' : ''}
-        cursor-pointer transition-all duration-200`}
+        ${isCurrentPlayer ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}
+        transition-all duration-200`}
       style={{
         left: `${character.position.x * 64 + 32}px`,
         top: `${character.position.y * 64 + 32}px`,
