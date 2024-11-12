@@ -12,13 +12,20 @@ const WinCondition: React.FC = () => {
       const avgTurnTime = gameMode === 'PVP' ? 10 : 3;
       const estimatedDuration = turnCount * avgTurnTime;
       
-      // Save match to history
-      matchHistoryService.saveMatch({
+      // Create match record with required fields
+      const matchRecord = {
+        date: new Date().toISOString(),
         gameMode,
         winner,
-        players,
-        turnCount,
-      }, estimatedDuration);
+        players: {
+          player1: players.player1.characters.map(c => c.id).join(','),
+          player2: players.player2.characters.map(c => c.id).join(','),
+        },
+        duration: estimatedDuration,
+      };
+      
+      // Save match to history
+      matchHistoryService.saveMatch(matchRecord, estimatedDuration);
     }
   }, [winner, gameMode, turnCount, players]);
 

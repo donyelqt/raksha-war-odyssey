@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
 import FindMatch from './components/FindMatch';
@@ -10,7 +9,6 @@ function App() {
   const dispatch = useDispatch();
   const { 
     gameMode,
-    characterSelectionPhase,
     botEngines,
     gameStarted
   } = useSelector((state: RootState) => state.game);
