@@ -28,4 +28,6 @@ export interface GameState {
   currentTurn: string;
   turnTimer: number;
   gameMode: 'PVP' | 'BOT';
+  winner: string | null;
+  gameOver: boolean;
 } 

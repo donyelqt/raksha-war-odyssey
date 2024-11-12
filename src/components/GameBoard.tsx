@@ -1,9 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Position } from '../types/game.types';
-import { moveCharacter, attackCharacter } from '../store/gameSlice';
+import { Position, Character as CharacterType } from '../types/game.types';
+import { moveCharacter, attackCharacter, selectCharacter, checkWinCondition } from '../store/gameSlice';
 import Character from './Character';
 import Castle from './Castle';
+import { RootState } from '../store';
 
 interface GameBoardProps {
   size: number;
@@ -19,15 +20,17 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     const isValidMove = isValidPosition(position, selectedCharacter);
     if (isValidMove) {
       dispatch(moveCharacter({ characterId: selectedCharacter.id, position }));
+      dispatch(checkWinCondition());
     }
 
     const targetCharacter = getCharacterAtPosition(position);
     if (targetCharacter && canAttack(selectedCharacter, targetCharacter)) {
       dispatch(attackCharacter({ attackerId: selectedCharacter.id, targetId: targetCharacter.id }));
+      dispatch(checkWinCondition());
     }
   };
 
-  const isValidPosition = (position: Position, character: Character) => {
+  const isValidPosition = (position: Position, character: CharacterType) => {
     const dx = Math.abs(position.x - character.position.x);
     const dy = Math.abs(position.y - character.position.y);
     return dx <= 1 && dy <= 1 && dx + dy <= 2;
@@ -43,7 +46,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     return null;
   };
 
-  const canAttack = (attacker: Character, target: Character) => {
+  const canAttack = (attacker: CharacterType, target: CharacterType) => {
     const dx = Math.abs(target.position.x - attacker.position.x);
     const dy = Math.abs(target.position.y - attacker.position.y);
     return dx <= 1 && dy <= 1;

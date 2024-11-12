@@ -2,16 +2,12 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import GameBoard from './components/GameBoard';
 import CharacterSelection from './components/CharacterSelection';
-import { Position } from './types/game.types';
+import GameInfo from './components/GameInfo';
 import { RootState } from './store';
 
 function App() {
   const [gameMode, setGameMode] = useState<'PVP' | 'BOT' | null>(null);
-  const { characterSelectionPhase } = useSelector((state: RootState) => state.game);
-
-  const handleSquareClick = (position: Position) => {
-    console.log('Clicked position:', position);
-  };
+  const { characterSelectionPhase, gameOver } = useSelector((state: RootState) => state.game);
 
   if (!gameMode) {
     return (
@@ -48,15 +44,22 @@ function App() {
         ) : (
           <div className="flex gap-8">
             <div className="flex-1">
-              <GameBoard size={9} onSquareClick={handleSquareClick} />
+              <GameBoard size={9} />
             </div>
-            
-            <div className="w-64 bg-gray-800 p-4 rounded-lg">
-              <h2 className="text-xl font-bold mb-4">Game Info</h2>
-              <div className="space-y-2">
-                <p>Current Turn: Player 1</p>
-                <p>Time Remaining: 10s</p>
-              </div>
+            <GameInfo />
+          </div>
+        )}
+        
+        {gameOver && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-gray-800 p-8 rounded-lg text-center">
+              <h2 className="text-3xl font-bold mb-4">Game Over</h2>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+              >
+                Play Again
+              </button>
             </div>
           </div>
         )}
