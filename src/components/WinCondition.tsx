@@ -4,7 +4,8 @@ import { RootState } from '../store';
 import { matchHistoryService } from '../services/matchHistoryService';
 
 const WinCondition: React.FC = () => {
-  const { winner, gameMode, turnCount, players } = useSelector((state: RootState) => state.game);
+  const gameState = useSelector((state: RootState) => state.game);
+  const { winner, gameMode, turnCount, players } = gameState;
 
   React.useEffect(() => {
     if (winner) {
@@ -12,22 +13,10 @@ const WinCondition: React.FC = () => {
       const avgTurnTime = gameMode === 'PVP' ? 10 : 3;
       const estimatedDuration = turnCount * avgTurnTime;
       
-      // Create match record with required fields
-      const matchRecord = {
-        date: new Date().toISOString(),
-        gameMode,
-        winner,
-        players: {
-          player1: players.player1.characters.map(c => c.id).join(','),
-          player2: players.player2.characters.map(c => c.id).join(','),
-        },
-        duration: estimatedDuration,
-      };
-      
-      // Save match to history
-      matchHistoryService.saveMatch(matchRecord, estimatedDuration);
+      // Save match to history with the full game state
+      matchHistoryService.saveMatch(gameState, estimatedDuration);
     }
-  }, [winner, gameMode, turnCount, players]);
+  }, [winner, gameMode, turnCount, players, gameState]);
 
   if (!winner) return null;
 
