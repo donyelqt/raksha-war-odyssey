@@ -1,11 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
-import FindMatchScreen from './components/FindMatch/FindMatchScreen';
+import FindMatch from './components/FindMatch';
 import CharacterSelection from './components/CharacterSelection';
 import GameLayout from './components/GameLayout';
 import BotEngineSelection from './components/BotEngineSelection';
-import GameOverview from './components/GameOverview';
 
 function App() {
   const dispatch = useDispatch();
@@ -13,17 +12,18 @@ function App() {
     gameMode,
     characterSelectionPhase,
     botEngines,
-    showGameOverview 
+    gameStarted
   } = useSelector((state: RootState) => state.game);
-
-  // Show game overview first time
-  if (showGameOverview) {
-    return <GameOverview onClose={() => dispatch({ type: 'game/hideGameOverview' })} />;
-  }
 
   // Show find match screen if no game mode selected
   if (!gameMode) {
-    return <FindMatchScreen />;
+    return <FindMatch onSelectMode={(mode) => {
+      dispatch({ type: 'game/setGameMode', payload: mode });
+      // For PVP mode, randomly select first player
+      if (mode === 'PVP') {
+        dispatch({ type: 'game/setRandomFirstPlayer' });
+      }
+    }} />;
   }
 
   // Show bot engine selection for BOT mode before character selection
@@ -31,7 +31,7 @@ function App() {
     return <BotEngineSelection />;
   }
 
-  // Show character selection after game mode is selected
+  // Show character selection before game starts
   if (characterSelectionPhase) {
     return <CharacterSelection />;
   }

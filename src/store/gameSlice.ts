@@ -379,9 +379,7 @@ const gameSlice = createSlice({
     setGameMode: (state: GameState, action: PayloadAction<'PVP' | 'BOT'>) => {
       state.gameMode = action.payload;
       state.turnTimer = action.payload === 'PVP' ? 10 : 3;
-      if (action.payload === 'PVP') {
-        state.currentTurn = Math.random() < 0.5 ? 'player1' : 'player2';
-      }
+      state.characterSelectionPhase = true;
     },
 
     setBotEngine: (state: GameState, action: PayloadAction<{ player: 'player1' | 'player2', engineId: string }>) => {
@@ -409,6 +407,10 @@ const gameSlice = createSlice({
 
     hideGameOverview: (state: GameState) => {
       state.showGameOverview = false;
+    },
+
+    setRandomFirstPlayer: (state: GameState) => {
+      state.currentTurn = Math.random() < 0.5 ? 'player1' : 'player2';
     },
   },
 });
@@ -561,6 +563,7 @@ export const {
   handleTurnViolation,
   startGame,
   hideGameOverview,
+  setRandomFirstPlayer,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
