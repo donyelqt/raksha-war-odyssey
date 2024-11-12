@@ -43,4 +43,8 @@ export interface GameState {
     player1: number;
     player2: number;
   };
+  botEngines: {
+    player1: string | null;
+    player2: string | null;
+  };
 } 

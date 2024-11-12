@@ -72,6 +72,10 @@ const initialState: GameState = {
     player1: 0,
     player2: 0,
   },
+  botEngines: {
+    player1: null,
+    player2: null,
+  },
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -285,6 +289,23 @@ const gameSlice = createSlice({
         state.gameOver = true;
       }
     },
+
+    setGameMode: (state: GameState, action: PayloadAction<'PVP' | 'BOT'>) => {
+      state.gameMode = action.payload;
+      state.turnTimer = action.payload === 'PVP' ? 10 : 3;
+      // Randomly select starting player for PVP mode
+      if (action.payload === 'PVP') {
+        state.currentTurn = Math.random() < 0.5 ? 'player1' : 'player2';
+      }
+    },
+
+    setBotEngine: (state: GameState, action: PayloadAction<{ player: 'player1' | 'player2', engineId: string }>) => {
+      state.botEngines[action.payload.player] = action.payload.engineId;
+      // Start game if both engines are selected
+      if (state.botEngines.player1 && state.botEngines.player2) {
+        state.characterSelectionPhase = true;
+      }
+    },
   },
 });
 
@@ -430,7 +451,9 @@ export const {
   updateTimer,
   checkWinCondition,
   executeBotMove,
-  endBotBattleMatch 
+  endBotBattleMatch,
+  setGameMode,
+  setBotEngine,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
