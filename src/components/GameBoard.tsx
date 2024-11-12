@@ -12,6 +12,11 @@ interface GameBoardProps {
   size: number;
 }
 
+interface PlayerData {
+  characters: CharacterType[];
+  castle: Position;
+}
+
 const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   const dispatch = useDispatch();
   const { players, currentTurn, selectedCharacter } = useSelector((state: RootState) => state.game);
@@ -60,7 +65,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   };
 
   const getCharacterAtPosition = (position: Position) => {
-    for (const [_, player] of Object.entries(players)) {
+    for (const [_, player] of Object.entries(players as Record<string, PlayerData>)) {
       const character = player.characters.find(
         (c: CharacterType) => c.position.x === position.x && c.position.y === position.y
       );
@@ -107,7 +112,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       </div>
 
       {/* Render Characters */}
-      {Object.entries(players).map(([playerId, playerData]) =>
+      {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) =>
         playerData.characters.map((character: CharacterType) => (
           <Character
             key={character.id}
@@ -124,7 +129,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
       )}
 
       {/* Render Castles */}
-      {Object.entries(players).map(([playerId, playerData]) => (
+      {Object.entries(players as Record<string, PlayerData>).map(([playerId, playerData]) => (
         <Castle
           key={playerId}
           position={playerData.castle}
