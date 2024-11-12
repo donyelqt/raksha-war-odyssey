@@ -4,15 +4,21 @@ import { setGameMode } from '../../store/gameSlice';
 import PvPCard from './PvPCard';
 import BotBattleCard from './BotBattleCard';
 import RecentMatches from './RecentMatches';
+import GameOverview from '../GameOverview';
 
 const FindMatchScreen: React.FC = () => {
   const dispatch = useDispatch();
   const [selectedMode, setSelectedMode] = useState<'PVP' | 'BOT' | null>(null);
+  const [showOverview, setShowOverview] = useState(true);
 
   const handleModeSelect = (mode: 'PVP' | 'BOT') => {
     setSelectedMode(mode);
     dispatch(setGameMode(mode));
   };
+
+  if (showOverview) {
+    return <GameOverview onClose={() => setShowOverview(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -55,6 +61,15 @@ const FindMatchScreen: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Help Button */}
+        <button
+          className="fixed bottom-4 right-4 p-4 bg-gray-800 rounded-full hover:bg-gray-700
+            transition-colors shadow-lg"
+          onClick={() => setShowOverview(true)}
+        >
+          <span className="text-2xl">❔</span>
+        </button>
       </div>
     </div>
   );
