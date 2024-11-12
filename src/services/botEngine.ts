@@ -32,8 +32,7 @@ export class BotEngine {
   private evaluateSkill(skill: Skill, character: Character, target: Position, gameState: GameState): number {
     if (skill.cooldown > 0) return -Infinity;
 
-    const currentPlayer = gameState.currentTurn;
-    const enemyCharacters = gameState.players[currentPlayer === 'player1' ? 'player2' : 'player1'].characters;
+    const enemyCharacters = gameState.players[gameState.currentTurn === 'player1' ? 'player2' : 'player1'].characters;
 
     switch (skill.effect) {
       case 'damage':
