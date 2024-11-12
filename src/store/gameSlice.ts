@@ -382,16 +382,20 @@ const gameSlice = createSlice({
     setGameMode: (state: GameState, action: PayloadAction<'PVP' | 'BOT'>) => {
       state.gameMode = action.payload;
       state.turnTimer = action.payload === 'PVP' ? 10 : 3;
+      state.characterSelectionPhase = action.payload === 'PVP';
+    },
+
+    startCharacterSelection: (state: GameState) => {
       state.characterSelectionPhase = true;
-      state.gameStarted = false;
+    },
+
+    completeCharacterSelection: (state: GameState) => {
+      state.characterSelectionPhase = false;
+      state.gameStarted = true;
     },
 
     setBotEngine: (state: GameState, action: PayloadAction<{ player: 'player1' | 'player2', engineId: string }>) => {
       state.botEngines[action.payload.player] = action.payload.engineId;
-      // Start game if both engines are selected
-      if (state.botEngines.player1 && state.botEngines.player2) {
-        state.characterSelectionPhase = true;
-      }
     },
 
     handleTurnViolation: (state: GameState) => {
@@ -563,6 +567,8 @@ export const {
   executeBotMove,
   endBotBattleMatch,
   setGameMode,
+  startCharacterSelection,
+  completeCharacterSelection,
   setBotEngine,
   handleTurnViolation,
   startGame,

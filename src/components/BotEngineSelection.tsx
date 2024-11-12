@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setBotEngine, startGame } from '../store/gameSlice';
+import { setBotEngine } from '../store/gameSlice';
 
 const botEngines = [
   { id: 'aggressive', name: 'Aggressive Bot', description: 'Focuses on attacking and dealing damage' },
@@ -8,7 +8,11 @@ const botEngines = [
   { id: 'balanced', name: 'Balanced Bot', description: 'Uses a mix of offensive and defensive tactics' },
 ];
 
-const BotEngineSelection: React.FC = () => {
+interface BotEngineSelectionProps {
+  onComplete: () => void;
+}
+
+const BotEngineSelection: React.FC<BotEngineSelectionProps> = ({ onComplete }) => {
   const dispatch = useDispatch();
   const [player1Bot, setPlayer1Bot] = useState('');
   const [player2Bot, setPlayer2Bot] = useState('');
@@ -17,7 +21,7 @@ const BotEngineSelection: React.FC = () => {
     if (player1Bot && player2Bot) {
       dispatch(setBotEngine({ player: 'player1', engineId: player1Bot }));
       dispatch(setBotEngine({ player: 'player2', engineId: player2Bot }));
-      dispatch(startGame());
+      onComplete();
     }
   };
 
