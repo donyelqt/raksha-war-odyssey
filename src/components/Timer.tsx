@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { updateTimer, endTurn } from '../store/gameSlice';
+import { updateTimer, endTurnAction } from '../store/gameSlice';
 
 const Timer: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,7 +12,7 @@ const Timer: React.FC = () => {
       if (turnTimer > 0) {
         dispatch(updateTimer(turnTimer - 1));
       } else {
-        dispatch(endTurn());
+        dispatch(endTurnAction());
       }
     }, 1000);
 

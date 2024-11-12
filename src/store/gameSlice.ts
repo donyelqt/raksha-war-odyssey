@@ -106,7 +106,7 @@ const gameSlice = createSlice({
       if (character && isValidMove(character.position, position)) {
         character.position = position;
         state.selectedCharacter = null;
-        endTurn(state);
+        gameSlice.caseReducers.endTurn(state);
       } else {
         handleInvalidAction(state);
       }
@@ -130,7 +130,7 @@ const gameSlice = createSlice({
           soundService.play('defeat');
         }
         state.selectedCharacter = null;
-        endTurn(state);
+        gameSlice.caseReducers.endTurn(state);
       } else {
         handleInvalidAction(state);
       }
@@ -151,7 +151,7 @@ const gameSlice = createSlice({
           applySkillEffect(state, character, skill, targetPosition);
           skill.cooldown = getSkillCooldown(skill.id);
           state.selectedCharacter = null;
-          endTurn(state);
+          gameSlice.caseReducers.endTurn(state);
         } else {
           handleInvalidAction(state);
         }
@@ -245,7 +245,7 @@ const gameSlice = createSlice({
             break;
         }
         
-        endTurn(state);
+        gameSlice.caseReducers.endTurn(state);
       }
     },
   },
@@ -334,7 +334,7 @@ const handleInvalidAction = (state: GameState) => {
     state.winner = state.currentTurn === 'player1' ? 'player2' : 'player1';
     state.gameOver = true;
   } else {
-    endTurn(state);
+    gameSlice.caseReducers.endTurn(state);
   }
 };
 
@@ -389,7 +389,7 @@ export const {
   moveCharacter, 
   attackCharacter,
   useSkill,
-  endTurn: endTurnAction,
+  endTurn,
   updateTimer,
   checkWinCondition,
   executeBotMove 

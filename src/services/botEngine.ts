@@ -76,7 +76,6 @@ export class BotEngine {
 
   private findBestSkillTarget(skill: Skill, character: Character, gameState: GameState): Position | null {
     const currentPlayer = gameState.currentTurn;
-    const otherPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
     let bestScore = -Infinity;
     let bestTarget: Position | null = null;
 
