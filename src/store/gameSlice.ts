@@ -114,8 +114,32 @@ const gameSlice = createSlice({
       if (character) {
         const skill = character.skills.find(s => s.id === skillId);
         if (skill) {
-          // Implement skill effects here
+          switch (skill.effect) {
+            case 'damage':
+              // Deal damage to target
+              const targetCharacter = getCharacterAtPosition(state, targetPosition);
+              if (targetCharacter) {
+                targetCharacter.health -= 30;
+                if (targetCharacter.health <= 0) {
+                  targetCharacter.health = 100;
+                  targetCharacter.position = getInitialPosition(targetCharacter.id, getPlayerIdByCharacter(state, targetCharacter));
+                }
+              }
+              break;
+            case 'heal':
+              // Heal the character
+              character.health = Math.min(character.health + 20, 100);
+              break;
+            case 'defense':
+              // Implement defense buff (you may need to add a defense property to characters)
+              break;
+            case 'control':
+              // Implement control effect (e.g., stun or root)
+              break;
+          }
           state.selectedCharacter = null;
+          state.currentTurn = state.currentTurn === 'player1' ? 'player2' : 'player1';
+          state.turnTimer = 10;
         }
       }
     },
@@ -159,3 +183,22 @@ export const {
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
+
+const getCharacterAtPosition = (state: GameState, position: Position) => {
+  for (const player of Object.values(state.players)) {
+    const character = player.characters.find(
+      c => c.position.x === position.x && c.position.y === position.y
+    );
+    if (character) return character;
+  }
+  return null;
+};
+
+const getPlayerIdByCharacter = (state: GameState, character: Character) => {
+  for (const [playerId, player] of Object.entries(state.players)) {
+    if (player.characters.some(c => c.id === character.id)) {
+      return playerId;
+    }
+  }
+  return null;
+};

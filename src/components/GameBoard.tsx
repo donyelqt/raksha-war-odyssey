@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Position, Character as CharacterType } from '../types/game.types';
-import { moveCharacter, attackCharacter, selectCharacter, checkWinCondition } from '../store/gameSlice';
+import { Position, Character as CharacterType, Skill } from '../types/game.types';
+import { moveCharacter, attackCharacter, selectCharacter, checkWinCondition, useSkill } from '../store/gameSlice';
 import Character from './Character';
 import Castle from './Castle';
+import SkillBar from './SkillBar';
 import { RootState } from '../store';
 
 interface GameBoardProps {
@@ -13,9 +14,20 @@ interface GameBoardProps {
 const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
   const dispatch = useDispatch();
   const { players, currentTurn, selectedCharacter } = useSelector((state: RootState) => state.game);
+  const [targetingSkill, setTargetingSkill] = useState<Skill | null>(null);
 
   const handleSquareClick = (position: Position) => {
     if (!selectedCharacter) return;
+
+    if (targetingSkill) {
+      dispatch(useSkill({
+        characterId: selectedCharacter.id,
+        skillId: targetingSkill.id,
+        targetPosition: position
+      }));
+      setTargetingSkill(null);
+      return;
+    }
 
     const isValidMove = isValidPosition(position, selectedCharacter);
     if (isValidMove) {
@@ -52,6 +64,13 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
     return dx <= 1 && dy <= 1;
   };
 
+  const isValidSkillTarget = (position: Position) => {
+    if (!selectedCharacter || !targetingSkill) return false;
+    const dx = Math.abs(position.x - selectedCharacter.position.x);
+    const dy = Math.abs(position.y - selectedCharacter.position.y);
+    return dx <= targetingSkill.range && dy <= targetingSkill.range;
+  };
+
   return (
     <div className="relative">
       <div className="grid grid-cols-9 gap-0.5 bg-gray-700 p-2 rounded-lg">
@@ -64,7 +83,9 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
             <div
               key={`${x}-${y}`}
               className={`w-16 h-16 ${
-                selectedCharacter && isValidPosition(position, selectedCharacter)
+                targetingSkill && isValidSkillTarget(position)
+                  ? 'bg-green-200 hover:bg-green-300'
+                  : selectedCharacter && isValidPosition(position, selectedCharacter)
                   ? 'bg-blue-200 hover:bg-blue-300'
                   : 'bg-gray-200 hover:bg-gray-300'
               } cursor-pointer transition-colors`}
@@ -99,8 +120,10 @@ const GameBoard: React.FC<GameBoardProps> = ({ size }) => {
           playerId={playerId}
         />
       ))}
+
+      <SkillBar onSkillSelect={setTargetingSkill} />
     </div>
   );
 };
 
-export default GameBoard; 
+export default GameBoard;

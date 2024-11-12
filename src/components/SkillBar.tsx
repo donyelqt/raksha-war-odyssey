@@ -1,18 +1,19 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { useSkill } from '../store/gameSlice';
 import { Skill } from '../types/game.types';
 
-const SkillBar: React.FC = () => {
-  const dispatch = useDispatch();
+interface SkillBarProps {
+  onSkillSelect: (skill: Skill | null) => void;
+}
+
+const SkillBar: React.FC<SkillBarProps> = ({ onSkillSelect }) => {
   const { selectedCharacter } = useSelector((state: RootState) => state.game);
 
   if (!selectedCharacter) return null;
 
   const handleSkillClick = (skill: Skill) => {
-    // Implement skill targeting logic
-    console.log(`Using skill: ${skill.name}`);
+    onSkillSelect(skill);
   };
 
   return (
@@ -26,6 +27,12 @@ const SkillBar: React.FC = () => {
           {skill.name}
         </button>
       ))}
+      <button
+        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white"
+        onClick={() => onSkillSelect(null)}
+      >
+        Cancel
+      </button>
     </div>
   );
 };
