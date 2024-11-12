@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import GameBoard from './components/GameBoard';
 import CharacterSelection from './components/CharacterSelection';
 import GameInfo from './components/GameInfo';
+import MatchHistory from './components/MatchHistory';
 import { RootState } from './store';
 
 function App() {
@@ -42,11 +43,16 @@ function App() {
         {characterSelectionPhase ? (
           <CharacterSelection />
         ) : (
-          <div className="flex gap-8">
-            <div className="flex-1">
-              <GameBoard size={9} />
+          <div className="space-y-8">
+            <div className="flex gap-8">
+              <div className="flex-1">
+                <GameBoard size={9} />
+              </div>
+              <div className="w-64 space-y-4">
+                <GameInfo />
+                <MatchHistory />
+              </div>
             </div>
-            <GameInfo />
           </div>
         )}
         
