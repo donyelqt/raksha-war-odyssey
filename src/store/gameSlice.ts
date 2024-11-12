@@ -156,6 +156,7 @@ const initialState: GameState = {
   },
   gameStarted: false,
   recentMatches: [],
+  showGameOverview: true,
 };
 
 const getInitialPosition = (characterId: string, playerId: string): Position => {
@@ -405,6 +406,10 @@ const gameSlice = createSlice({
       state.gameStarted = true;
       state.turnTimer = state.gameMode === 'PVP' ? 10 : 3;
     },
+
+    hideGameOverview: (state: GameState) => {
+      state.showGameOverview = false;
+    },
   },
 });
 
@@ -555,6 +560,7 @@ export const {
   setBotEngine,
   handleTurnViolation,
   startGame,
+  hideGameOverview,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

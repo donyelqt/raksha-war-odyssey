@@ -64,4 +64,5 @@ export interface GameState {
   };
   gameStarted: boolean;
   recentMatches: MatchRecord[];
+  showGameOverview: boolean;
 } 
