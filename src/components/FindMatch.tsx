@@ -1,53 +1,78 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setGameMode } from '../../store/gameSlice';
+import PvPCard from './PvPCard';
+import BotBattleCard from './BotBattleCard';
+import RecentMatches from './RecentMatches';
+import GameOverview from '../GameOverview';
 
-interface FindMatchProps {
-  onSelectMode: (mode: 'PVP' | 'BOT') => void;
-}
+const FindMatchScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  const [selectedMode, setSelectedMode] = useState<'PVP' | 'BOT' | null>(null);
+  const [showOverview, setShowOverview] = useState(true);
 
-const FindMatch: React.FC<FindMatchProps> = ({ onSelectMode }) => {
+  const handleModeSelect = (mode: 'PVP' | 'BOT') => {
+    setSelectedMode(mode);
+    dispatch(setGameMode(mode));
+  };
+
+  if (showOverview) {
+    return <GameOverview onClose={() => setShowOverview(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-4xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto p-8">
+        {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4">Raksha: War Odyssey</h1>
-          <p className="text-xl text-gray-400">Choose your battle mode</p>
+          <h1 className="text-6xl font-bold mb-4">Raksha: War Odyssey</h1>
+          <p className="text-xl text-gray-400">Choose your battle mode and begin your journey</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8">
-          {/* PVP Battle Card */}
-          <div 
-            className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors cursor-pointer"
-            onClick={() => onSelectMode('PVP')}
-          >
-            <h2 className="text-2xl font-bold mb-4">PVP Battle 🎮</h2>
-            <div className="space-y-4">
-              <p>🎏 Random first player selection</p>
-              <p>🕹 Game starts on first action</p>
-              <p>⏱ 10-second turn timer</p>
-              <p>👥 Choose 2 unique characters</p>
-            </div>
+        {/* Main Content */}
+        <div className="grid grid-cols-12 gap-8">
+          {/* Battle Modes */}
+          <div className="col-span-8 grid grid-cols-2 gap-6">
+            <PvPCard 
+              isSelected={selectedMode === 'PVP'}
+              onSelect={() => handleModeSelect('PVP')}
+            />
+            <BotBattleCard 
+              isSelected={selectedMode === 'BOT'}
+              onSelect={() => handleModeSelect('BOT')}
+            />
           </div>
 
-          {/* Bot Battle Card */}
-          <div 
-            className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors cursor-pointer"
-            onClick={() => onSelectMode('BOT')}
-          >
-            <h2 className="text-2xl font-bold mb-4">Bot Battle 🤖</h2>
-            <div className="space-y-4">
-              <p>🎏 Select bot engines</p>
-              <p>🕹 Automated gameplay</p>
-              <p>⏱ 3-second turn timer</p>
-              <p>💸 Submit algorithms for rewards!</p>
-            </div>
-            <div className="mt-4 text-sm text-yellow-400">
-              Check "Bot Battle Rules" for more info on submitting algorithms
-            </div>
+          {/* Recent Matches & Stats */}
+          <div className="col-span-4 space-y-6">
+            <RecentMatches />
           </div>
         </div>
+
+        {/* Start Button */}
+        {selectedMode && (
+          <div className="mt-8 text-center">
+            <button
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-xl font-bold
+                transition-all duration-300 transform hover:scale-105"
+              onClick={() => handleModeSelect(selectedMode)}
+            >
+              Start {selectedMode} Battle
+            </button>
+          </div>
+        )}
+
+        {/* Help Button */}
+        <button
+          className="fixed bottom-4 right-4 p-4 bg-gray-800 rounded-full hover:bg-gray-700
+            transition-colors shadow-lg"
+          onClick={() => setShowOverview(true)}
+        >
+          <span className="text-2xl">❔</span>
+        </button>
       </div>
     </div>
   );
 };
 
-export default FindMatch; 
+export default FindMatchScreen; 
