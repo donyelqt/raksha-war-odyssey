@@ -1,7 +1,10 @@
 import React from 'react';
-//import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { setGameMode } from '../store/gameSlice';
 
 const HomeScreen: React.FC<{ onSelectMode: (mode: 'PVP' | 'BOT') => void }> = ({ onSelectMode }) => {
+  const dispatch = useDispatch();
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="max-w-6xl mx-auto p-8">

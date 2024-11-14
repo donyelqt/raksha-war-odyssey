@@ -33,7 +33,6 @@ const BotEngineSelection: React.FC<BotEngineSelectionProps> = ({ onComplete }) =
           <select 
             className="w-full bg-gray-800 p-2 rounded"
             value={player2Bot}
-            
             onChange={(e) => setPlayer2Bot(e.target.value)}
           >
             <option value="">Select Bot Engine</option>
