@@ -1,10 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
 import HomeScreen from './components/HomeScreen';
-import CharacterSelectionPhase from './components/CharacterSelectionPhase';
+import CharacterSelectionPhase from './components/character/CharacterSelectionPhase';
+import BotEngineSelection from './components/battle/BotEngineSelection';
 import GameLayout from './components/GameLayout';
-import BotEngineSelection from './components/BotEngineSelection';
-
 
 function App() {
   const dispatch = useDispatch();
@@ -25,8 +24,8 @@ function App() {
     }} />;
   }
 
-  // Step 2a: Bot Engine Selection (Only for BOT mode)
-  if (gameMode === 'BOT' && (!botEngines.player1 || !botEngines.player2)) {
+  // Step 2a: Bot Engine Selection (Only for Player vs Bot mode)
+  if (gameMode === 'BOT' && !botEngines.player2) {
     return <BotEngineSelection onComplete={() => {
       dispatch({ type: 'game/startCharacterSelection' });
     }} />;
