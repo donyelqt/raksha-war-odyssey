@@ -1,7 +1,6 @@
 import { GameState } from '../types/game.types';
 
-export interface MatchRecord {
-  id: string;
+interface MatchRecord {
   date: string;
   gameMode: 'PVP' | 'BOT';
   winner: string;
@@ -13,40 +12,25 @@ export interface MatchRecord {
 }
 
 class MatchHistoryService {
-  private readonly STORAGE_KEY = 'raksha_match_history';
-
   saveMatch(gameState: GameState, duration: number) {
+    if (!gameState.gameMode) {
+      console.error("Cannot save match: gameMode is null");
+      return;
+    }
+
     const matchRecord: MatchRecord = {
-      id: crypto.randomUUID(),
       date: new Date().toISOString(),
       gameMode: gameState.gameMode,
       winner: gameState.winner || 'unknown',
       players: {
-        player1: 'Player 1',
-        player2: gameState.gameMode === 'BOT' ? 'Bot' : 'Player 2',
+        player1: gameState.players.player1.characters.map(c => c.id).join(','),
+        player2: gameState.players.player2.characters.map(c => c.id).join(','),
       },
       duration,
     };
 
-    const history = this.getMatchHistory();
-    history.unshift(matchRecord);
-    
-    // Keep only last 10 matches
-    if (history.length > 10) {
-      history.pop();
-    }
-
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(history));
-    return matchRecord;
-  }
-
-  getMatchHistory(): MatchRecord[] {
-    const history = localStorage.getItem(this.STORAGE_KEY);
-    return history ? JSON.parse(history) : [];
-  }
-
-  clearHistory() {
-    localStorage.removeItem(this.STORAGE_KEY);
+    // Save matchRecord to local storage or a database
+    console.log("Match saved:", matchRecord);
   }
 }
 

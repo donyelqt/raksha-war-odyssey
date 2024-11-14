@@ -447,6 +447,12 @@ const gameSlice = createSlice({
       localStorage.removeItem('gameState');
       return initialState;
     },
+
+    resetGameMode: (state) => {
+      state.gameMode = null;
+      state.characterSelectionPhase = false;
+      state.gameStarted = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addDefaultCase((state) => {
@@ -607,6 +613,7 @@ export const {
   hideGameOverview,
   setRandomFirstPlayer,
   resetGame,
+  resetGameMode,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

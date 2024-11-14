@@ -46,7 +46,7 @@ export interface GameState {
   };
   currentTurn: string;
   turnTimer: number;
-  gameMode: 'PVP' | 'BOT';
+  gameMode: 'PVP' | 'BOT' | null;
   winner: string | null;
   gameOver: boolean;
   availableCharacters: Character[];
