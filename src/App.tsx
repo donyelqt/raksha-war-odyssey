@@ -4,7 +4,7 @@ import HomeScreen from './components/HomeScreen';
 import CharacterSelectionPhase from './components/CharacterSelectionPhase';
 import GameLayout from './components/GameLayout';
 import BotEngineSelection from './components/BotEngineSelection';
-import FindMatch from './components/FindMatch';
+
 
 function App() {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ function App() {
 
   // Step 1: Home Screen (Mode Selection)
   if (!gameMode) {
-    return <FindMatch onSelectMode={(mode) => {
+    return <HomeScreen onSelectMode={(mode: 'PVP' | 'BOT') => {
       dispatch({ type: 'game/setGameMode', payload: mode });
       if (mode === 'PVP') {
         dispatch({ type: 'game/setRandomFirstPlayer' });

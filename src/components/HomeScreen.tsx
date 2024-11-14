@@ -2,7 +2,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setGameMode } from '../store/gameSlice';
 
-const HomeScreen: React.FC = () => {
+interface HomeScreenProps {
+  onSelectMode: (mode: 'PVP' | 'BOT') => void;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectMode }) => {
   const dispatch = useDispatch();
 
   return (
@@ -18,6 +22,7 @@ const HomeScreen: React.FC = () => {
           <div 
             className="bg-gray-800 p-8 rounded-lg hover:bg-gray-700 transition-all cursor-pointer"
             onClick={() => {
+              onSelectMode('PVP');
               dispatch(setGameMode('PVP'));
               dispatch({ type: 'game/setRandomFirstPlayer' });
             }}
@@ -34,7 +39,10 @@ const HomeScreen: React.FC = () => {
           {/* Bot Mode */}
           <div 
             className="bg-gray-800 p-8 rounded-lg hover:bg-gray-700 transition-all cursor-pointer"
-            onClick={() => dispatch(setGameMode('BOT'))}
+            onClick={() => {
+              onSelectMode('BOT');
+              dispatch(setGameMode('BOT'));
+            }}
           >
             <h2 className="text-3xl font-bold mb-6">Bot Battle 🤖</h2>
             <div className="space-y-4 text-lg">
