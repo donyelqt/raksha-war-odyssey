@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface GameLobbyProps {
   username?: string;
@@ -12,28 +12,12 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
   rank = 0 
 }) => {
   const [selectedRace, setSelectedRace] = useState(3);
-  const [showFindMatch, setShowFindMatch] = useState(false);
+  const navigate = useNavigate();
   
   const raceOptions = [3, 5, 7];
 
   return (
     <div className="flex w-full h-screen">
-      {/* Add this modal */}
-      {showFindMatch && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-xl">
-            <h2 className="text-2xl font-bold mb-4">Finding Match...</h2>
-            <p className="mb-4">Looking for players in rank {rank}</p>
-            <button
-              onClick={() => setShowFindMatch(false)}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Left sidebar - decorative */}
       <div className="bg-indigo-100 w-1/4 h-full">
         <div className="h-full bg-gradient-to-br from-indigo-50 to-indigo-100" />
@@ -53,13 +37,13 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
 
         {/* Main actions */}
         <button
-          onClick={() => setShowFindMatch(true)}
+          onClick={() => navigate('/hero-selection')}
           className="bg-yellow-700 hover:bg-yellow-800 text-white py-3 px-8 rounded-lg 
                    mb-8 transition-all duration-200 transform hover:scale-105
                    flex items-center space-x-2 shadow-lg"
         >
           <Users size={20} />
-          <span>Start Battle</span>
+          <span>Start Bot Battle</span>
         </button>
 
         {/* Race selection */}
@@ -93,11 +77,11 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
             About
           </a>
           <Link 
-            to="/bot-battle-lobby"
+            to="/pvp-battle-lobby"
             className="text-blue-600 hover:text-blue-800 transition-colors duration-200
                      hover:underline"
           >
-            Bot Battle
+            PVP Mode
           </Link>
         </div>
 

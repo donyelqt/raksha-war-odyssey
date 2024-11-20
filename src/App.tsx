@@ -8,6 +8,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<GameLobby />} />
+        <Route path="/pvp-battle-lobby" element={<GameLobby />} />
         <Route path="/bot-battle-lobby" element={<BotBattleLobby />} />
         <Route path="/hero-selection" element={<HeroSelection />} />
       </Routes>
