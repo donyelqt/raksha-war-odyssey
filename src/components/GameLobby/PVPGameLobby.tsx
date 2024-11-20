@@ -7,7 +7,7 @@ interface GameLobbyProps {
   rank?: number;
 }
 
-const GameLobby: React.FC<GameLobbyProps> = ({ 
+const PVPGameLobby: React.FC<GameLobbyProps> = ({ 
   username = "dranyloth140465",
   rank = 0 
 }) => {
@@ -116,4 +116,4 @@ const GameLobby: React.FC<GameLobbyProps> = ({
   );
 };
 
-export default GameLobby;
+export default PVPGameLobby;

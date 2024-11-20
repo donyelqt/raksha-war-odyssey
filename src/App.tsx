@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import GameLobby from './components/GameLobby/GameLobby';
+import GameLobby from './components/GameLobby/PVPGameLobby';
 import BotBattleLobby from './components/GameLobby/BotBattleLobby';
 import HeroSelection from './components/HeroSelection/HeroSelection';
 
