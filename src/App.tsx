@@ -1,38 +1,18 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from './store';
-import HeroSelection from './components/HeroSelection/HeroSelection';
-//import GameLayout from './components/GameLayout';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GameLobby from './components/GameLobby/GameLobby';
+import BotBattleLobby from './components/GameLobby/BotBattleLobby';
+import HeroSelection from './components/HeroSelection/HeroSelection';
 
 function App() {
-  const dispatch = useDispatch();
-  const { 
-    gameMode,
-    characterSelectionPhase,
-    //gameStarted
-  } = useSelector((state: RootState) => state.game);
-
-  // Always start with GameLobby
-  if (!gameMode) {
-    return <GameLobby />;
-  }
-
-  // Hero Selection Phase
-  if (characterSelectionPhase) {
-    return <HeroSelection 
-      onHeroSelect={(hero) => {
-        dispatch({ type: 'game/selectHero', payload: hero });
-      }}
-    />;
-  }
-
-  // Main Game
-  //if (gameStarted) {
-   // return <GameLayout />;
-  //}
-
-  // Default fallback to GameLobby
-  return <GameLobby />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<GameLobby />} />
+        <Route path="/bot-battle-lobby" element={<BotBattleLobby />} />
+        <Route path="/hero-selection" element={<HeroSelection />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

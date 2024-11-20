@@ -7,7 +7,7 @@ interface GameLobbyProps {
   rank?: number;
 }
 
-const GameLobby: React.FC<GameLobbyProps> = ({ 
+const BotGameLobby: React.FC<GameLobbyProps> = ({ 
   username = "dranyloth140465",
   rank = 0 
 }) => {
@@ -59,7 +59,7 @@ const GameLobby: React.FC<GameLobbyProps> = ({
                    flex items-center space-x-2 shadow-lg"
         >
           <Users size={20} />
-          <span>Find Match</span>
+          <span>Start Battle</span>
         </button>
 
         {/* Race selection */}
@@ -116,4 +116,4 @@ const GameLobby: React.FC<GameLobbyProps> = ({
   );
 };
 
-export default GameLobby;
+export default BotGameLobby;
