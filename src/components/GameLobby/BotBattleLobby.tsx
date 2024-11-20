@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users } from 'lucide-react';
+import { Bot } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface GameLobbyProps {
@@ -42,7 +42,7 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
                    mb-8 transition-all duration-200 transform hover:scale-105
                    flex items-center space-x-2 shadow-lg"
         >
-          <Users size={20} />
+          <Bot size={20} />
           <span>Start Bot Battle</span>
         </button>
 
