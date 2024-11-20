@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-interface GameLobbyProps {
+interface PVPGameLobbyProps {
   username?: string;
   rank?: number;
 }
 
-const PVPGameLobby: React.FC<GameLobbyProps> = ({ 
+const PVPGameLobby: React.FC<PVPGameLobbyProps> = ({ 
   username = "dranyloth140465",
   rank = 0 
 }) => {
