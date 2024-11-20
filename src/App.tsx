@@ -1,43 +1,38 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
-import HomeScreen from './components/HomeScreen';
-import CharacterSelectionPhase from './components/character/CharacterSelectionPhase';
-import BotEngineSelection from './components/battle/BotEngineSelection';
-import GameLayout from './components/GameLayout';
+import HeroSelection from './components/HeroSelection/HeroSelection';
+//import GameLayout from './components/GameLayout';
+import GameLobby from './components/GameLobby/GameLobby';
 
 function App() {
   const dispatch = useDispatch();
   const { 
     gameMode,
-    botEngines,
-    gameStarted
+    characterSelectionPhase,
+    //gameStarted
   } = useSelector((state: RootState) => state.game);
 
-  // Step 1: Home Screen (Mode Selection)
+  // Always start with GameLobby
   if (!gameMode) {
-    return <HomeScreen onSelectMode={(mode: 'PVP' | 'BOT') => {
-      dispatch({ type: 'game/setGameMode', payload: mode });
-      if (mode === 'PVP') {
-        dispatch({ type: 'game/setRandomFirstPlayer' });
-        dispatch({ type: 'game/startCharacterSelection' });
-      }
-    }} />;
+    return <GameLobby />;
   }
 
-  // Step 2a: Bot Engine Selection (Only for Player vs Bot mode)
-  if (gameMode === 'BOT' && !botEngines.player2) {
-    return <BotEngineSelection onComplete={() => {
-      dispatch({ type: 'game/startCharacterSelection' });
-    }} />;
+  // Hero Selection Phase
+  if (characterSelectionPhase) {
+    return <HeroSelection 
+      onHeroSelect={(hero) => {
+        dispatch({ type: 'game/selectHero', payload: hero });
+      }}
+    />;
   }
 
-  // Step 2b: Character Selection Phase
-  if (!gameStarted) {
-    return <CharacterSelectionPhase />;
-  }
+  // Main Game
+  //if (gameStarted) {
+   // return <GameLayout />;
+  //}
 
-  // Step 3: Main Game
-  return <GameLayout />;
+  // Default fallback to GameLobby
+  return <GameLobby />;
 }
 
 export default App;
