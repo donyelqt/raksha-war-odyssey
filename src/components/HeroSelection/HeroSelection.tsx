@@ -73,24 +73,27 @@ const HeroSelection: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="mt-4">
-                        <label className="mr-2">Select Bot (Player 1)</label>
-                        <select className="border rounded p-1">
-                            <option>Bot 1</option>
-                            <option>Bot 2</option>
-                        </select>
-                    </div>
-                    <div className="mt-2">
-                        <label className="mr-2">Select Bot (Player 2)</label>
-                        <select className="border rounded p-1">
-                            <option>Bot 1</option>
-                            <option>Bot 2</option>
-                        </select>
-                    </div>
                     <a href="#" className="mt-4 text-blue-500">About</a>
+                    <div className='flex items-center justify-center gap-4'>
+                        <div className="mt-4">
+                            <label className="mr-2">Select Bot (Player 1)</label>
+                            <select className="border rounded p-1">
+                                <option>Bot 1</option>
+                                <option>Bot 2</option>
+                            </select>
+                        </div>
+                        <div className="mt-4">
+                            <label className="mr-2">Select Bot (Player 2)</label>
+                            <select className="border rounded p-1">
+                                <option>Bot 1</option>
+                                <option>Bot 2</option>
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            
+
             {/* Right sidebar - decorative */}
             <div className="bg-red-100 w-1/4 h-full">
                 <div className="h-full bg-gradient-to-bl from-red-50 to-red-100" />
