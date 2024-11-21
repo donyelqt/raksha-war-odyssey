@@ -83,7 +83,7 @@ const HeroSelection: React.FC = () => {
 
             {/*Main Content*/}
             <div className="flex flex-col items-center justify-center w-1/2 p-8 bg-gray-100 min-h-screen">
-                <h1 className="text-2xl font-bold p-8 text-blue-600 mb-4">Player 1's turn to pick (Blue Celestials)</h1>
+                <h1 className="text-xl font-bold p-2 rounded-lg text-blue-600 mb-4">Player 1's turn to pick (Blue Celestials)</h1>
                 
                 {/* Hero Slider Container */}
                 <div className="w-full max-w-4xl relative px-12">
@@ -110,8 +110,8 @@ const HeroSelection: React.FC = () => {
                                 key={hero.name} 
                                 className="snap-center bg-white border-gray-400 border p-4 rounded-xl shadow-md flex flex-col items-center transform transition-transform duration-300 hover:scale-105"
                             >
-                                <h2 className="text-lg font-bold">{hero.name}</h2>
-                                <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2 object-cover" />
+                                <h2 className="text-xl font-bold">{hero.name}</h2>
+                                <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2 object-fill" />
                                 <div className="mt-2 space-y-1">
                                     {hero.abilities.map((ability) => (
                                         <button 
