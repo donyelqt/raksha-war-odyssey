@@ -38,6 +38,36 @@ const heroes: Hero[] = [
         abilities: ['Entwine', 'Willow', 'Symbiosis'],
         image: 'src/assets/characters/jumka/jumka.png',
     },
+    {
+        name: 'ATRI',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/atri/atri.png',
+    },
+    {
+        name: 'Goshen',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/goshen/goshen.png',
+    },
+    {
+        name: 'MERT',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/mert/mert.png',
+    },
+    {
+        name: 'OGUMI',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/ogumi/ogumi.png',
+    },
+    {
+        name: 'SHAI',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/shai/shai.png',
+    },
+    {
+        name: 'TALA',
+        abilities: ['TBA', 'TBA', 'TBA'],
+        image: 'src/assets/characters/tala/tala.png',
+    },
 ];
 
 const HeroSelection: React.FC = () => {
