@@ -1,6 +1,5 @@
-import { ArrowLeft, ArrowLeftIcon, ArrowRight, MoveRightIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
-import { BiLeftArrow } from 'react-icons/bi';
 import 'tailwindcss/tailwind.css';
 
 interface Hero {
