@@ -51,8 +51,8 @@ const HeroSelection: React.FC = () => {
             </div>
 
             {/*Main Content*/}
-            <div className='flex flex-col items-center justify-center h-full bg-white'>
-                <div className="flex flex-col items-center p-8 bg-gray-100 min-h-screen">
+            {/*<div className='flex flex-col items-center justify-center h-full bg-white'>*/}
+                <div className="flex flex-col items-center justify-center w-1/2 p-8 bg-gray-100 min-h-screen">
                     <h1 className="text-2xl font-bold p-8 text-blue-600 mb-4">Player 1's turn to pick (Blue Celestials)</h1>
                     <div className="flex overflow-x-auto space-x-4">
                         {heroes.map((hero) => (
@@ -61,7 +61,7 @@ const HeroSelection: React.FC = () => {
                                 <h2 className="text-lg font-bold">{hero.name}</h2>
                                 <div className="mt-2 space-y-1">
                                     {hero.abilities.map((ability) => (
-                                        <button key={ability} className="bg-yellow-200 w-full px-4 py-2 rounded-2xl">{ability}</button>
+                                        <button key={ability} className="bg-yellow-500 px-4 items-center w-36 py-2 rounded-2xl">{ability}</button>
                                     ))}
                                 </div>
                                 <button
@@ -92,7 +92,7 @@ const HeroSelection: React.FC = () => {
                     </div>
 
                 </div>
-            </div>
+            {/*</div>*/}
 
             {/* Right sidebar - decorative */}
             <div className="bg-red-100 w-1/2 h-full">
