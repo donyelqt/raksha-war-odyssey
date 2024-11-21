@@ -97,7 +97,7 @@ const HeroSelection: React.FC = () => {
                             }
                         }}
                     >
-                        <ArrowLeft />
+                        <ArrowLeft size={20} />
                     </button>
 
                     {/* Hero Cards Container */}
@@ -146,7 +146,7 @@ const HeroSelection: React.FC = () => {
                             }
                         }}
                     >
-                        <ArrowRight />
+                        <ArrowRight size={20} />
                     </button>
                 </div>
 
