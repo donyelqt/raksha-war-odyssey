@@ -11,7 +11,7 @@ const heroes: Hero[] = [
     {
         name: 'MARHUI',
         abilities: ['Burn', 'Pillar', 'Inferno'],
-        image: 'path/to/marhui.png',
+        image: 'src/assets/characters/mahui/mahui.png',
     },
     {
         name: 'FAROS',
@@ -57,8 +57,8 @@ const HeroSelection: React.FC = () => {
                     <div className="flex overflow-x-auto space-x-4">
                         {heroes.map((hero) => (
                             <div key={hero.name} className="bg-white border-gray-400 border p-4 rounded-xl shadow-md flex flex-col items-center">
-                                <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2" />
                                 <h2 className="text-lg font-bold">{hero.name}</h2>
+                                <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2" />
                                 <div className="mt-2 space-y-1">
                                     {hero.abilities.map((ability) => (
                                         <button key={ability} className="bg-yellow-500/25 px-4 text-center w-32 py-2 rounded-2xl">{ability}</button>
