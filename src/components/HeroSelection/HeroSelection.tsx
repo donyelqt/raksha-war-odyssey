@@ -111,7 +111,7 @@ const HeroSelection: React.FC = () => {
                                 className="snap-center bg-white border-gray-400 border p-4 rounded-xl shadow-md flex flex-col items-center transform transition-transform duration-300 hover:scale-105"
                             >
                                 <h2 className="text-xl font-bold">{hero.name}</h2>
-                                <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2 object-fill" />
+                                <img src={hero.image} alt={hero.name} className="w-32 h-32 mb-2 object-fill" />
                                 <div className="mt-2 space-y-1">
                                     {hero.abilities.map((ability) => (
                                         <button 
