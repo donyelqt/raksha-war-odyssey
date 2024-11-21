@@ -1,4 +1,6 @@
+import { ArrowLeft, ArrowLeftIcon, ArrowRight, MoveRightIcon } from 'lucide-react';
 import React, { useState } from 'react';
+import { BiLeftArrow } from 'react-icons/bi';
 import 'tailwindcss/tailwind.css';
 
 interface Hero {
@@ -96,7 +98,7 @@ const HeroSelection: React.FC = () => {
                             }
                         }}
                     >
-                        <span className="text-2xl text-gray-600">←</span>
+                        <ArrowLeft />
                     </button>
 
                     {/* Hero Cards Container */}
@@ -145,7 +147,7 @@ const HeroSelection: React.FC = () => {
                             }
                         }}
                     >
-                        <span className="text-2xl text-gray-600">→</span>
+                        <ArrowRight />
                     </button>
                 </div>
 
