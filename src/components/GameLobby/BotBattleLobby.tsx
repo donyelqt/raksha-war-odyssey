@@ -27,10 +27,10 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
       <div className="flex flex-col items-center justify-center w-1/2 h-full bg-white">
         {/* Game title */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-yellow-800 mb-2 tracking-wide">
+          <h1 className="text-5xl font-bold text-yellow-600 mb-2 tracking-wide">
             Raksha
           </h1>
-          <p className="text-lg text-yellow-800 font-medium">
+          <p className="text-lg text-yellow-600 font-medium">
             War Odyssey
           </p>
         </div>
@@ -38,7 +38,7 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
         {/* Main actions */}
         <button
           onClick={() => navigate('/hero-selection')}
-          className="bg-yellow-700 hover:bg-yellow-800 text-white py-3 px-8 rounded-lg 
+          className="bg-yellow-800 hover:bg-yellow-900 text-white py-3 px-8 rounded-lg 
                    mb-8 transition-all duration-200 transform hover:scale-105
                    flex items-center space-x-2 shadow-lg"
         >
@@ -87,7 +87,7 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
 
         {/* User info */}
         <div className="text-center bg-gray-50 px-6 py-4 rounded-lg shadow-sm">
-          <p className="text-red-600 mb-1">user: {username}</p>
+          <p className="text-red-600 mb-1"><span className='text-gray-600'>user:</span> {username}</p>
           <p className="text-gray-600">rank: {rank}</p>
         </div>
       </div>
