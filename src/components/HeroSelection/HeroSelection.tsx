@@ -16,27 +16,27 @@ const heroes: Hero[] = [
     {
         name: 'FAROS',
         abilities: ['Gust', 'Cyclone', 'Nimbus'],
-        image: 'path/to/faros.png',
+        image: 'src/assets/characters/faros/faros.png',
     },
     {
         name: 'KIDU',
         abilities: ['Charge', 'Zap', 'Thunderstorm'],
-        image: 'path/to/kidu.png',
+        image: 'src/assets/characters/kidu/kidu.png',
     },
     {
         name: 'ANIKA',
         abilities: ['Sphere', 'Clone', 'Tsunami'],
-        image: 'path/to/anika.png',
+        image: 'src/assets/characters/anika/anika.png',
     },
     {
         name: 'SAJIK',
         abilities: ['Petrify', 'Quicksand', 'Tremor'],
-        image: 'path/to/sajik.png',
+        image: 'src/assets/characters/sajik/sajik.png',
     },
     {
         name: 'JUMKA',
         abilities: ['Entwine', 'Willow', 'Symbiosis'],
-        image: 'path/to/jumka.png',
+        image: 'src/assets/characters/jumka/jumka.png',
     },
 ];
 
