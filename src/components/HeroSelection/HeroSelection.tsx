@@ -90,6 +90,11 @@ const HeroSelection: React.FC = () => {
                     <a href="#" className="mt-4 text-blue-500">About</a>
                 </div>
             </div>
+            
+            {/* Right sidebar - decorative */}
+            <div className="bg-red-100 w-1/4 h-full">
+                <div className="h-full bg-gradient-to-bl from-red-50 to-red-100" />
+            </div>
         </div>
     );
 };
