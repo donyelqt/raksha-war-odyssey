@@ -56,7 +56,7 @@ const HeroSelection: React.FC = () => {
                     <h1 className="text-2xl font-bold p-8 text-blue-600 mb-4">Player 1's turn to pick (Blue Celestials)</h1>
                     <div className="flex overflow-x-auto space-x-4">
                         {heroes.map((hero) => (
-                            <div key={hero.name} className="bg-white border-gray-500 border p-4 rounded-xl shadow-md flex flex-col items-center">
+                            <div key={hero.name} className="bg-white border-gray-400 border p-4 rounded-xl shadow-md flex flex-col items-center">
                                 <img src={hero.image} alt={hero.name} className="w-24 h-24 mb-2" />
                                 <h2 className="text-lg font-bold">{hero.name}</h2>
                                 <div className="mt-2 space-y-1">
