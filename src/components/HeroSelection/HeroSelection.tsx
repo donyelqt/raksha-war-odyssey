@@ -61,7 +61,7 @@ const HeroSelection: React.FC = () => {
                                 <h2 className="text-lg font-bold">{hero.name}</h2>
                                 <div className="mt-2 space-y-1">
                                     {hero.abilities.map((ability) => (
-                                        <button key={ability} className="bg-yellow-500/25 px-4 items-center w-36 py-2 rounded-2xl">{ability}</button>
+                                        <button key={ability} className="bg-yellow-500/25 px-4 text-center w-32 py-2 rounded-2xl">{ability}</button>
                                     ))}
                                 </div>
                                 <button
