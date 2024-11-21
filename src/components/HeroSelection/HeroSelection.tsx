@@ -74,7 +74,7 @@ const HeroSelection: React.FC = () => {
                         ))}
                     </div>
                     <a href="#" className="mt-4 text-blue-500 hover:underline hover:decoration-blue-500">About</a>
-                    <div className='flex items-center justify-center gap-4'>
+                    <div className='flex items-center mt-2 justify-center gap-4'>
                         <div className="mt-4">
                             <label className="mr-2">Select Bot (Player 1)</label>
                             <select className="border rounded p-1">
