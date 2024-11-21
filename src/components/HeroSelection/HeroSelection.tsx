@@ -66,7 +66,7 @@ const HeroSelection: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => setSelectedHero(hero.name)}
-                                    className={`mt-2 px-4 py-2 rounded ${selectedHero === hero.name ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                                    className={`mt-2 px-3 py-1 text-sm text-white rounded ${selectedHero === hero.name ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
                                 >
                                     Pick
                                 </button>
