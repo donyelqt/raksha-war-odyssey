@@ -37,7 +37,7 @@ const BotGameLobby: React.FC<GameLobbyProps> = ({
 
         {/* Main actions */}
         <button
-          onClick={() => navigate('/hero-selection')}
+          onClick={() => navigate('/p1-hero-selection')}
           className="bg-yellow-800 hover:bg-yellow-900 text-white py-3 px-8 rounded-lg 
                    mb-8 transition-all duration-200 transform hover:scale-105
                    flex items-center space-x-2 shadow-lg"
