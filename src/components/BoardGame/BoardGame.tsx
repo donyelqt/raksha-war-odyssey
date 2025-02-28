@@ -14,10 +14,6 @@ const BoardGame: React.FC = () => {
             {/*Main Content*/}
             <div className="flex flex-col items-center justify-center w-1/2 p-8 bg-gray-100 min-h-screen">
 
-                {/* Hero Slider Container */}
-                <div className="w-full max-w-4xl relative px-12">
-        
-
                     {/* Hero Cards Container */}
                     {/*<div
                         id="hero-slider"
@@ -44,14 +40,12 @@ const BoardGame: React.FC = () => {
                         ))}
                     </div>*/}
 
-                </div>
 
                 <a href="#" className="mt-6 text-blue-500 hover:text-blue-600 hover:underline transition-colors duration-200">
                     About
                 </a>
 
                
-
                 {/* Bot Selection */}
                 <div className='flex items-center mt-4 justify-center gap-8'>
                     <div className="flex flex-col gap-2">
