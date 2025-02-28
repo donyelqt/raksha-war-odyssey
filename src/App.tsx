@@ -3,6 +3,7 @@ import BotBattleLobby from './components/GameLobby/BotBattleLobby';
 import PVPGameLobby from './components/GameLobby/PVPGameLobby';
 import P1HeroSelection from './components/HeroSelection/P1HeroSelection';
 import P2HeroSelection from './components/HeroSelection/P2HeroSelection';
+import BoardGame from './components/BoardGame/BoardGame';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/bot-battle-lobby" element={<BotBattleLobby />} />
         <Route path="/p1-hero-selection" element={<P1HeroSelection />} />
         <Route path="/p2-hero-selection" element={<P2HeroSelection />} />
+        <Route path="/board-game" element={<BoardGame />} />
       </Routes>
     </Router>
   );
