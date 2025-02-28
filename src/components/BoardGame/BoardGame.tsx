@@ -1,77 +1,6 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+// import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
-
-
-interface Hero {
-    name: string;
-    abilities: string[];
-    image: string;
-}
-
-const heroes: Hero[] = [
-    {
-        name: 'MARHUI',
-        abilities: ['Burn', 'Pillar', 'Inferno'],
-        image: 'src/assets/characters/mahui/mahui.png',
-    },
-    {
-        name: 'FAROS',
-        abilities: ['Gust', 'Cyclone', 'Nimbus'],
-        image: 'src/assets/characters/faros/faros.png',
-    },
-    {
-        name: 'KIDU',
-        abilities: ['Charge', 'Zap', 'Thunderstorm'],
-        image: 'src/assets/characters/kidu/kidu.png',
-    },
-    {
-        name: 'ANIKA',
-        abilities: ['Sphere', 'Clone', 'Tsunami'],
-        image: 'src/assets/characters/anika/anika.png',
-    },
-    {
-        name: 'SAJIK',
-        abilities: ['Petrify', 'Quicksand', 'Tremor'],
-        image: 'src/assets/characters/sajik/sajik.png',
-    },
-    {
-        name: 'JUMKA',
-        abilities: ['Entwine', 'Willow', 'Symbiosis'],
-        image: 'src/assets/characters/jumka/jumka.png',
-    },
-    {
-        name: 'ATRI',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/atri/atri.png',
-    },
-    {
-        name: 'Goshen',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/goshen/goshen.png',
-    },
-    {
-        name: 'MERT',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/mert/mert.png',
-    },
-    {
-        name: 'OGUMI',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/ogumi/ogumi.png',
-    },
-    {
-        name: 'SHAI',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/shai/shai.png',
-    },
-    {
-        name: 'TALA',
-        abilities: ['TBA', 'TBA', 'TBA'],
-        image: 'src/assets/characters/tala/tala.png',
-    },
-];
-
 
 const BoardGame: React.FC = () => {
 
@@ -84,25 +13,13 @@ const BoardGame: React.FC = () => {
 
             {/*Main Content*/}
             <div className="flex flex-col items-center justify-center w-1/2 p-8 bg-gray-100 min-h-screen">
-                <h1 className="text-xl font-bold p-2 rounded-lg text-blue-600 mb-4">Player 1's turn to pick (Blue Celestials)</h1>
 
                 {/* Hero Slider Container */}
                 <div className="w-full max-w-4xl relative px-12">
-                    {/* Left Arrow */}
-                    <button
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200"
-                        onClick={() => {
-                            const container = document.getElementById('hero-slider');
-                            if (container) {
-                                container.scrollLeft -= 300;
-                            }
-                        }}
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
+        
 
                     {/* Hero Cards Container */}
-                    <div
+                    {/*<div
                         id="hero-slider"
                         className="flex overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory gap-4 py-4"
                     >
@@ -125,20 +42,8 @@ const BoardGame: React.FC = () => {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </div>*/}
 
-                    {/* Right Arrow */}
-                    <button
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200"
-                        onClick={() => {
-                            const container = document.getElementById('hero-slider');
-                            if (container) {
-                                container.scrollLeft += 300;
-                            }
-                        }}
-                    >
-                        <ArrowRight size={20} />
-                    </button>
                 </div>
 
                 <a href="#" className="mt-6 text-blue-500 hover:text-blue-600 hover:underline transition-colors duration-200">
